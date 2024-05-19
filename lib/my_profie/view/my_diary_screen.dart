@@ -1,9 +1,9 @@
 import 'package:charity_project/fitness_app_theme.dart';
-import 'package:charity_project/my_diary/meals_list_view.dart';
-import 'package:charity_project/my_diary/water_view.dart';
+import 'package:charity_project/my_profie/view/meals_list_view.dart';
+import 'package:charity_project/my_profie/view/water_view.dart';
 import 'package:charity_project/ui_view/body_measurement.dart';
 import 'package:charity_project/ui_view/glass_view.dart';
-import 'package:charity_project/ui_view/mediterranean_diet_view.dart';
+import 'package:charity_project/ui_view/user_profile_view.dart';
 import 'package:charity_project/ui_view/title_view.dart';
 import 'package:flutter/material.dart';
 
@@ -60,23 +60,16 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     const int count = 9;
 
     listViews.add(
-      TitleView(
-        titleTxt: 'Mediterranean diet',
-        subTxt: 'Details',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                const Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
-    listViews.add(
-      MediterranesnDietView(
+      UserProfileView(
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
                 const Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
+        photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9tIsToUJHzHVf0M2bNh-ZHvR_TdqQcy-84-FUsVtoog&s',
+        firstName: 'Никита',
+        lastName: 'Пташкин',
+        role: 'Программист',
       ),
     );
     listViews.add(

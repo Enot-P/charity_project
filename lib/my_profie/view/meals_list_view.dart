@@ -2,7 +2,7 @@ import 'package:charity_project/fitness_app_theme.dart';
 import 'package:charity_project/models/meals_list_data.dart';
 import 'package:flutter/material.dart';
 
-import '../../main.dart';
+import '../../../main.dart';
 
 class MealsListView extends StatefulWidget {
   const MealsListView(
