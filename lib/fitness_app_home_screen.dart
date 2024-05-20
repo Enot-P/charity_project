@@ -1,5 +1,5 @@
 import 'package:charity_project/models/tabIcon_data.dart';
-import 'package:charity_project/my_profie/view/my_diary_screen.dart';
+import 'package:charity_project/my_profie/view/my_profile_screen.dart';
 import 'package:charity_project/training/training_screen.dart';
 import 'package:flutter/material.dart';
 import 'bottom_navigation_view/view/bottom_bar_view.dart';
@@ -31,7 +31,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyDiaryScreen(animationController: animationController);
+    tabBody = MyProfileScreen(animationController: animationController);
     super.initState();
   }
 
@@ -88,7 +88,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      MyDiaryScreen(animationController: animationController);
+                      MyProfileScreen(animationController: animationController);
                 });
               });
             } else if (index == 1 || index == 3) {
