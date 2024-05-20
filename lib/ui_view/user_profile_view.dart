@@ -66,7 +66,7 @@ class UserProfileView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '$firstName',
+                                firstName,
                                 style: TextStyle(
                                   fontFamily: FitnessAppTheme.fontName,
                                   fontWeight: FontWeight.w500,
@@ -76,7 +76,7 @@ class UserProfileView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '$lastName',
+                                lastName,
                                 style: TextStyle(
                                   fontFamily: FitnessAppTheme.fontName,
                                   fontWeight: FontWeight.w500,
@@ -85,7 +85,7 @@ class UserProfileView extends StatelessWidget {
                                   color: FitnessAppTheme.grey.withOpacity(0.5),
                                 ),
                               ),
-                              SizedBox(height: 5), // Просто немного места добавил
+                              const SizedBox(height: 5), // Просто немного места добавил
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border(
@@ -97,7 +97,7 @@ class UserProfileView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '$role',
+                                role,
                                 style: TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w800,

@@ -1,31 +1,50 @@
 import 'package:charity_project/fitness_app_theme.dart';
-import 'package:charity_project/ui_view/fond_list_view.dart';
-import 'package:charity_project/ui_view/user_profile_view.dart';
-import 'package:charity_project/ui_view/title_view.dart';
+import 'package:charity_project/models/fond_data.dart';
+import 'package:charity_project/ui_view/fond_profile_view.dart';
 import 'package:flutter/material.dart';
 
-class MyProfileScreen extends StatefulWidget {
-  const MyProfileScreen({super.key, this.animationController});
-
+class FondProfileScreen extends StatefulWidget {
+  const FondProfileScreen({super.key, required this.fond, this.animationController});
+  final FondData fond;
   final AnimationController? animationController;
+
   @override
-  _MyProfileScreenState createState() => _MyProfileScreenState();
+  _FondProfileScreenState createState() => _FondProfileScreenState();
 }
 
-class _MyProfileScreenState extends State<MyProfileScreen>
-    with TickerProviderStateMixin {
+class _FondProfileScreenState extends State<FondProfileScreen> with TickerProviderStateMixin {
   Animation<double>? topBarAnimation;
-
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
   @override
   void initState() {
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    super.initState();
+
+    if (widget.animationController != null) {
+      topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
-            parent: widget.animationController!,
-            curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+          parent: widget.animationController!,
+          curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+        ),
+      );
+    } else {
+      final defaultAnimationController = AnimationController(
+        duration: const Duration(milliseconds: 2000),
+        vsync: this,
+      );
+
+      topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+          parent: defaultAnimationController,
+          curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn),
+        ),
+      );
+
+      defaultAnimationController.forward();
+    }
+
     addAllListData();
 
     scrollController.addListener(() {
@@ -35,8 +54,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
             topBarOpacity = 1.0;
           });
         }
-      } else if (scrollController.offset <= 24 &&
-          scrollController.offset >= 0) {
+      } else if (scrollController.offset <= 24 && scrollController.offset >= 0) {
         if (topBarOpacity != scrollController.offset / 24) {
           setState(() {
             topBarOpacity = scrollController.offset / 24;
@@ -50,44 +68,12 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         }
       }
     });
-    super.initState();
   }
 
   void addAllListData() {
-    const int animationDuration = 5;
-
     listViews.add(
-      UserProfileView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                const Interval((1 / animationDuration) * 1, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-        photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9tIsToUJHzHVf0M2bNh-ZHvR_TdqQcy-84-FUsVtoog&s',
-        firstName: 'Никита',
-        lastName: 'Пташкин',
-        role: 'Программист',
-      ),
-    );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Ваши последние пожертвования:',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                const Interval((1 / animationDuration) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
-
-    listViews.add(
-      FondListView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController!,
-                curve: const Interval((1 / animationDuration) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
+      FondProfileView(
+        fond: widget.fond,
       ),
     );
   }
@@ -109,7 +95,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
             getAppBarUI(),
             SizedBox(
               height: MediaQuery.of(context).padding.bottom,
-            )
+            ),
           ],
         ),
       ),
@@ -126,9 +112,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
           return ListView.builder(
             controller: scrollController,
             padding: EdgeInsets.only(
-              top: AppBar().preferredSize.height +
-                  MediaQuery.of(context).padding.top +
-                  24,
+              top: AppBar().preferredSize.height + MediaQuery.of(context).padding.top + 24,
               bottom: 62 + MediaQuery.of(context).padding.bottom,
             ),
             itemCount: listViews.length,
@@ -147,7 +131,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
     return Column(
       children: <Widget>[
         AnimatedBuilder(
-          animation: widget.animationController!,
+          animation: widget.animationController ?? AnimationController(vsync: this),
           builder: (BuildContext context, Widget? child) {
             return FadeTransition(
               opacity: topBarAnimation!,
@@ -162,10 +146,10 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                          color: FitnessAppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
+                        color: FitnessAppTheme.grey.withOpacity(0.4 * topBarOpacity),
+                        offset: const Offset(1.1, 1.1),
+                        blurRadius: 10.0,
+                      ),
                     ],
                   ),
                   child: Column(
@@ -175,10 +159,11 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
+                          left: 16,
+                          right: 16,
+                          top: 16 - 8.0 * topBarOpacity,
+                          bottom: 12 - 8.0 * topBarOpacity,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -200,14 +185,14 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                             ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
             );
           },
-        )
+        ),
       ],
     );
   }
