@@ -1,6 +1,6 @@
 import 'package:charity_project/models/tabIcon_data.dart';
 import 'package:flutter/material.dart';
-import 'package:charity_project/fitness_app_theme.dart';
+import 'package:charity_project/charity_app_theme.dart';
 
 class TabIcons extends StatefulWidget {
   const TabIcons({super.key, this.tabIconData, this.removeAllSelect});
@@ -76,7 +76,7 @@ class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
                       width: 8,
                       height: 8,
                       decoration: const BoxDecoration(
-                        color: FitnessAppTheme.nearlyDarkBlue,
+                        color: CharityAppTheme.nearlyDarkBlue,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -97,7 +97,7 @@ class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
                       width: 4,
                       height: 4,
                       decoration: const BoxDecoration(
-                        color: FitnessAppTheme.nearlyDarkBlue,
+                        color: CharityAppTheme.nearlyDarkBlue,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -118,7 +118,7 @@ class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: FitnessAppTheme.nearlyDarkBlue,
+                        color: CharityAppTheme.nearlyDarkBlue,
                         shape: BoxShape.circle,
                       ),
                     ),

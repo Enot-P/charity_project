@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'package:charity_project/fitness_app_theme.dart';
+import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/models/tabIcon_data.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +41,7 @@ class _BottomBarViewState extends State<BottomBarView> with TickerProviderStateM
             return Transform(
               transform: Matrix4.translationValues(0.0, 0.0, 0.0),
               child: PhysicalShape(
-                color: FitnessAppTheme.white,
+                color: CharityAppTheme.white,
                 // elevation: 16.0,
                 clipper: TabClipper(
                     radius: Tween<double>(begin: 0.0, end: 1.0)

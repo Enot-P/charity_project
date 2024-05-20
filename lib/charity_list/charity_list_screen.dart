@@ -5,7 +5,7 @@ import 'package:charity_project/ui_view/title_view.dart';
 
 import 'package:flutter/material.dart';
 
-import '../fitness_app_theme.dart';
+import '../charity_app_theme.dart';
 
 
 class CharityListScreen extends StatefulWidget {
@@ -111,7 +111,7 @@ class _CharityListScreenState extends State<CharityListScreen>
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: FitnessAppTheme.background,
+      color: CharityAppTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
@@ -178,13 +178,13 @@ class _CharityListScreenState extends State<CharityListScreen>
                 ),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: FitnessAppTheme.white.withOpacity(topBarOpacity),
+                    color: CharityAppTheme.white.withOpacity(topBarOpacity),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(32.0),
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                        color: FitnessAppTheme.grey.withOpacity(
+                        color: CharityAppTheme.grey.withOpacity(
                             0.4 * topBarOpacity),
                         offset: const Offset(1.1, 1.1),
                         blurRadius: 10.0,
@@ -208,11 +208,11 @@ class _CharityListScreenState extends State<CharityListScreen>
                               'Список фондов',
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                fontFamily: FitnessAppTheme.fontName,
+                                fontFamily: CharityAppTheme.fontName,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 15 + 6 - 6 * topBarOpacity,
                                 letterSpacing: 1.2,
-                                color: FitnessAppTheme.darkerText,
+                                color: CharityAppTheme.darkerText,
                               ),
                             ),
                           ),

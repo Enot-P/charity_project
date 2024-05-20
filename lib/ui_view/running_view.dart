@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../fitness_app_theme.dart';
+import '../charity_app_theme.dart';
 
 class RunningView extends StatelessWidget {
   final AnimationController? animationController;
@@ -30,7 +30,7 @@ class RunningView extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 16, bottom: 16),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: FitnessAppTheme.white,
+                            color: CharityAppTheme.white,
                             borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(8.0),
                                 bottomLeft: Radius.circular(8.0),
@@ -38,7 +38,7 @@ class RunningView extends StatelessWidget {
                                 topRight: Radius.circular(8.0)),
                             boxShadow: <BoxShadow>[
                               BoxShadow(
-                                  color: FitnessAppTheme.grey.withOpacity(0.4),
+                                  color: CharityAppTheme.grey.withOpacity(0.4),
                                   offset: const Offset(1.1, 1.1),
                                   blurRadius: 10.0),
                             ],
@@ -74,12 +74,12 @@ class RunningView extends StatelessWidget {
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             fontFamily:
-                                                FitnessAppTheme.fontName,
+                                                CharityAppTheme.fontName,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 15,
                                             letterSpacing: 0.0,
                                             color:
-                                                FitnessAppTheme.nearlyDarkBlue,
+                                                CharityAppTheme.nearlyDarkBlue,
                                           ),
                                         ),
                                       ),
@@ -96,11 +96,11 @@ class RunningView extends StatelessWidget {
                                       "По улице Красной\n     Ждем всех в 13:00!",
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
-                                        fontFamily: FitnessAppTheme.fontName,
+                                        fontFamily: CharityAppTheme.fontName,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 10,
                                         letterSpacing: 0.0,
-                                        color: FitnessAppTheme.grey
+                                        color: CharityAppTheme.grey
                                             .withOpacity(0.5),
                                       ),
                                     ),

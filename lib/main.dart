@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:charity_project/fitness_app_home_screen.dart';
+import 'package:charity_project/charity_app_home_screen.dart';
 import 'package:charity_project/fond_profile/fond_profile_screen.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:charity_project/models/tabIcon_data.dart';
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/': (context) => const FitnessAppHomeScreen(),
+        '/': (context) => const CharityAppHomeScreen(),
         '/fondProfile' : (context) => FondProfileScreen(fond: fondData),
       },
     );

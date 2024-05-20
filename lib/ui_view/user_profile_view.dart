@@ -1,4 +1,4 @@
-import 'package:charity_project/fitness_app_theme.dart';
+import 'package:charity_project/charity_app_theme.dart';
 import 'package:flutter/material.dart';
 
 
@@ -36,7 +36,7 @@ class UserProfileView extends StatelessWidget {
                   left: 24, right: 24, top: 16, bottom: 18),
               child: Container(
                 decoration: BoxDecoration(
-                  color: FitnessAppTheme.white,
+                  color: CharityAppTheme.white,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(8.0),
                       bottomLeft: Radius.circular(8.0),
@@ -44,7 +44,7 @@ class UserProfileView extends StatelessWidget {
                       topRight: Radius.circular(68.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                        color: FitnessAppTheme.grey.withOpacity(0.2),
+                        color: CharityAppTheme.grey.withOpacity(0.2),
                         offset: const Offset(1.1, 1.1),
                         blurRadius: 10.0),
                   ],
@@ -67,21 +67,21 @@ class UserProfileView extends StatelessWidget {
                               Text(
                                 firstName,
                                 style: TextStyle(
-                                  fontFamily: FitnessAppTheme.fontName,
+                                  fontFamily: CharityAppTheme.fontName,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 25,
                                   letterSpacing: 1,
-                                  color: FitnessAppTheme.grey.withOpacity(0.5),
+                                  color: CharityAppTheme.grey.withOpacity(0.5),
                                 ),
                               ),
                               Text(
                                 lastName,
                                 style: TextStyle(
-                                  fontFamily: FitnessAppTheme.fontName,
+                                  fontFamily: CharityAppTheme.fontName,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 25,
                                   letterSpacing: 0.8,
-                                  color: FitnessAppTheme.grey.withOpacity(0.5),
+                                  color: CharityAppTheme.grey.withOpacity(0.5),
                                 ),
                               ),
                               const SizedBox(height: 5), // Просто немного места добавил

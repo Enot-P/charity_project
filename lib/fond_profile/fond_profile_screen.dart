@@ -1,4 +1,4 @@
-import 'package:charity_project/fitness_app_theme.dart';
+import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:charity_project/ui_view/fond_description_view.dart';
 import 'package:charity_project/ui_view/fond_profile_view.dart';
@@ -98,7 +98,7 @@ class _FondProfileScreenState extends State<FondProfileScreen> with TickerProvid
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: FitnessAppTheme.background,
+      color: CharityAppTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(
@@ -152,13 +152,13 @@ class _FondProfileScreenState extends State<FondProfileScreen> with TickerProvid
                     0.0, 30 * (1.0 - topBarAnimation!.value), 0.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: FitnessAppTheme.white.withOpacity(topBarOpacity),
+                    color: CharityAppTheme.white.withOpacity(topBarOpacity),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(32.0),
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                        color: FitnessAppTheme.grey.withOpacity(0.4 * topBarOpacity),
+                        color: CharityAppTheme.grey.withOpacity(0.4 * topBarOpacity),
                         offset: const Offset(1.1, 1.1),
                         blurRadius: 10.0,
                       ),
@@ -186,11 +186,11 @@ class _FondProfileScreenState extends State<FondProfileScreen> with TickerProvid
                                   'My Diary',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
-                                    fontFamily: FitnessAppTheme.fontName,
+                                    fontFamily: CharityAppTheme.fontName,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 22 + 6 - 6 * topBarOpacity,
                                     letterSpacing: 1.2,
-                                    color: FitnessAppTheme.darkerText,
+                                    color: CharityAppTheme.darkerText,
                                   ),
                                 ),
                               ),

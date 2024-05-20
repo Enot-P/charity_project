@@ -3,23 +3,23 @@ import 'package:charity_project/models/tabIcon_data.dart';
 import 'package:charity_project/my_profie/view/my_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'bottom_navigation_view/view/bottom_bar_view.dart';
-import 'fitness_app_theme.dart';
+import 'charity_app_theme.dart';
 
-class FitnessAppHomeScreen extends StatefulWidget {
-  const FitnessAppHomeScreen({super.key});
+class CharityAppHomeScreen extends StatefulWidget {
+  const CharityAppHomeScreen({super.key});
 
   @override
-  _FitnessAppHomeScreenState createState() => _FitnessAppHomeScreenState();
+  _CharityAppHomeScreenState createState() => _CharityAppHomeScreenState();
 }
 
-class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
+class _CharityAppHomeScreenState extends State<CharityAppHomeScreen>
     with TickerProviderStateMixin {
   AnimationController? animationController;
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
 
   Widget tabBody = Container(
-    color: FitnessAppTheme.background,
+    color: CharityAppTheme.background,
   );
 
   @override
@@ -44,7 +44,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: FitnessAppTheme.background,
+      color: CharityAppTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: FutureBuilder<bool>(
