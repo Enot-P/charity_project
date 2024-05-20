@@ -54,14 +54,14 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   }
 
   void addAllListData() {
-    const int count = 9;
+    const int animationDuration = 5;
 
     listViews.add(
       UserProfileView(
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
-                const Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
+                const Interval((1 / animationDuration) * 1, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
         photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9tIsToUJHzHVf0M2bNh-ZHvR_TdqQcy-84-FUsVtoog&s',
         firstName: 'Никита',
@@ -75,7 +75,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
-                const Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+                const Interval((1 / animationDuration) * 2, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
@@ -85,7 +85,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
                 parent: widget.animationController!,
-                curve: const Interval((1 / count) * 3, 1.0,
+                curve: const Interval((1 / animationDuration) * 3, 1.0,
                     curve: Curves.fastOutSlowIn))),
         mainScreenAnimationController: widget.animationController,
       ),

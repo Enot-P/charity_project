@@ -1,3 +1,4 @@
+import 'package:charity_project/models/tag_data.dart';
 import 'package:charity_project/my_profie/view/last_donation_view.dart';
 import 'package:charity_project/ui_view/running_view.dart';
 import 'package:charity_project/ui_view/title_view.dart';
@@ -8,7 +9,7 @@ import '../fitness_app_theme.dart';
 import '../ui_view/area_list_view.dart';
 
 class CharityListScreen extends StatefulWidget {
-  const CharityListScreen({super.key, this.animationController});
+  const CharityListScreen({Key? key, this.animationController});
 
   final AnimationController? animationController;
   @override
@@ -23,13 +24,16 @@ class _CharityListScreenState extends State<CharityListScreen>
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
+  String _selectedTag = TagData.tags[0]; // Первый тег по умолчанию
+  final List<String> _tags = TagData.getTags();
+
   @override
   void initState() {
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: widget.animationController!,
             curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    addAllListData();
+    addAllListData(_selectedTag);
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -56,24 +60,15 @@ class _CharityListScreenState extends State<CharityListScreen>
     super.initState();
   }
 
-  void addAllListData() {
-    const int count = 5;
+  void addAllListData(String tag) {
+    const int animationDuration = 5;
 
-    // listViews.add(
-    //   WorkoutView(
-    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController!,
-    //         curve:
-    //             const Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController!,
-    //   ),
-    // );
     listViews.add(
       RunningView(
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
-                const Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+            const Interval((1 / animationDuration) * 3, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
@@ -81,11 +76,10 @@ class _CharityListScreenState extends State<CharityListScreen>
     listViews.add(
       TitleView(
         titleTxt: 'Список фондов',
-        subTxt: 'Выбери тег',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
-                const Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
+            const Interval((1 / animationDuration) * 4, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
@@ -95,11 +89,18 @@ class _CharityListScreenState extends State<CharityListScreen>
         mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
             CurvedAnimation(
                 parent: widget.animationController!,
-                curve: const Interval((1 / count) * 3, 1.0,
+                curve: const Interval((1 / animationDuration) * 3, 1.0,
                     curve: Curves.fastOutSlowIn))),
         mainScreenAnimationController: widget.animationController,
       ),
     );
+  }
+
+  void _updateListByTag(String tag) {
+    setState(() {
+      listViews.clear();
+      addAllListData(tag);
+    });
   }
 
   Future<bool> getData() async {
@@ -118,7 +119,10 @@ class _CharityListScreenState extends State<CharityListScreen>
             getMainListViewUI(),
             getAppBarUI(),
             SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
+              height: MediaQuery
+                  .of(context)
+                  .padding
+                  .bottom,
             )
           ],
         ),
@@ -137,9 +141,14 @@ class _CharityListScreenState extends State<CharityListScreen>
             controller: scrollController,
             padding: EdgeInsets.only(
               top: AppBar().preferredSize.height +
-                  MediaQuery.of(context).padding.top +
-                  24,
-              bottom: 62 + MediaQuery.of(context).padding.bottom,
+                  MediaQuery
+                      .of(context)
+                      .padding
+                      .top + 24,
+              bottom: 62 + MediaQuery
+                  .of(context)
+                  .padding
+                  .bottom,
             ),
             itemCount: listViews.length,
             scrollDirection: Axis.vertical,
@@ -163,7 +172,10 @@ class _CharityListScreenState extends State<CharityListScreen>
               opacity: topBarAnimation!,
               child: Transform(
                 transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation!.value), 0.0),
+                  0.0,
+                  30 * (1.0 - topBarAnimation!.value),
+                  0.0,
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: FitnessAppTheme.white.withOpacity(topBarOpacity),
@@ -172,46 +184,65 @@ class _CharityListScreenState extends State<CharityListScreen>
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
-                          color: FitnessAppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
+                        color: FitnessAppTheme.grey.withOpacity(
+                            0.4 * topBarOpacity),
+                        offset: const Offset(1.1, 1.1),
+                        blurRadius: 10.0,
+                      ),
                     ],
                   ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context).padding.top,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Список фондов',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontFamily: FitnessAppTheme.fontName,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 22 + 6 - 6 * topBarOpacity,
-                                    letterSpacing: 1.2,
-                                    color: FitnessAppTheme.darkerText,
-                                  ),
-                                ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 50 - 8.0 * topBarOpacity,
+                      bottom: 12 - 8.0 * topBarOpacity,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Список фондов',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontFamily: FitnessAppTheme.fontName,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15 + 6 - 6 * topBarOpacity,
+                                letterSpacing: 1.2,
+                                color: FitnessAppTheme.darkerText,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      )
-                    ],
+                        DropdownButton<String>(
+                          value: _selectedTag,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          elevation: 16,
+                          style: const TextStyle(color: Colors.deepPurple),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.deepPurpleAccent,
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedTag = newValue!;
+                              _updateListByTag(newValue);
+                            });
+                          },
+                          items: _tags.map<DropdownMenuItem<String>>((
+                              String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
