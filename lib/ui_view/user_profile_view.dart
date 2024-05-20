@@ -1,7 +1,6 @@
 import 'package:charity_project/fitness_app_theme.dart';
-import 'package:charity_project/main.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+
 
 class UserProfileView extends StatelessWidget {
   final AnimationController? animationController;

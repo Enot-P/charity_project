@@ -1,6 +1,8 @@
 import 'package:charity_project/fitness_app_theme.dart';
 import 'package:charity_project/models/fond_data.dart';
+import 'package:charity_project/ui_view/fond_description_view.dart';
 import 'package:charity_project/ui_view/fond_profile_view.dart';
+import 'package:charity_project/ui_view/title_view.dart';
 import 'package:flutter/material.dart';
 
 class FondProfileScreen extends StatefulWidget {
@@ -76,7 +78,17 @@ class _FondProfileScreenState extends State<FondProfileScreen> with TickerProvid
         fond: widget.fond,
       ),
     );
+
+    const animationDuration = 5;
+    listViews.add(
+      FondDescriptionView(
+          fond: widget.fond
+      )
+    );
+
   }
+
+
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));

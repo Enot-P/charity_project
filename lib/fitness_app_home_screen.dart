@@ -1,6 +1,6 @@
+import 'package:charity_project/charity_list/charity_list_screen.dart';
 import 'package:charity_project/models/tabIcon_data.dart';
 import 'package:charity_project/my_profie/view/my_profile_screen.dart';
-import 'package:charity_project/training/charity_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'bottom_navigation_view/view/bottom_bar_view.dart';
 import 'fitness_app_theme.dart';
