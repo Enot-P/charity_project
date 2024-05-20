@@ -1,4 +1,3 @@
-import 'package:charity_project/charity_app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:google_fonts/google_fonts.dart';

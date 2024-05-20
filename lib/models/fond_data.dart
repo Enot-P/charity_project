@@ -18,7 +18,7 @@ class FondData {
   String description;
   String contactInfo;
 
-  static List<FondData> FondList = <FondData>[
+  static List<FondData> fondList = <FondData>[
     FondData(
       id: 0,
       imageUrl: 'assets/images/fond.png',

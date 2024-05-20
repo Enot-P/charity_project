@@ -1,6 +1,5 @@
 import 'package:charity_project/fond_profile/fond_profile_screen.dart';
 import 'package:charity_project/models/fond_data.dart';
-import 'package:charity_project/ui_view/fond_profile_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -20,7 +19,7 @@ class FondListView extends StatefulWidget {
 class _FondListViewState extends State<FondListView> with TickerProviderStateMixin {
   AnimationController? animationController;
 
-  final donations = FondData.FondList;
+  final donations = FondData.fondList;
 
   @override
   void initState() {
@@ -103,7 +102,7 @@ class _FondListViewState extends State<FondListView> with TickerProviderStateMix
 
 class AnimatedDonationItem extends StatelessWidget {
   const AnimatedDonationItem({
-    Key? key,
+    super.key,
     required this.fundName,
     required this.donationAmount,
     required this.imageUrl,
@@ -111,7 +110,7 @@ class AnimatedDonationItem extends StatelessWidget {
     this.animationController,
     this.animation,
     required this.fond,
-  }) : super(key: key);
+  });
 
   final String fundName;
   final double donationAmount;

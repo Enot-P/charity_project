@@ -5,9 +5,9 @@ class FondDescriptionView extends StatelessWidget {
   final FondData fond;
 
   const FondDescriptionView({
-    Key? key,
+    super.key,
     required this.fond,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
