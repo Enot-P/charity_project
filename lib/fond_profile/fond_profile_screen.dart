@@ -181,7 +181,7 @@ class _FondProfileScreenState extends State<FondProfileScreen> with TickerProvid
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'My Diary',
+                                  'Профиль',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: CharityAppTheme.fontName,

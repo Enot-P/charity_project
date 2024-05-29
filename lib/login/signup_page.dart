@@ -52,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   child: Column(
                     children: [
-                      const PageHeading(title: 'Sign-up',),
+                      const PageHeading(title: 'Регистрация',),
                       SizedBox(
                         width: 130,
                         height: 130,
@@ -88,12 +88,24 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       const SizedBox(height: 16,),
                       CustomInputField(
-                          labelText: 'Name',
-                          hintText: 'Your name',
+                          labelText: 'Имя',
+                          hintText: 'Ваше имя',
                           isDense: true,
                           validator: (textValue) {
                             if(textValue == null || textValue.isEmpty) {
-                              return 'Name field is required!';
+                              return 'Введите имя';
+                            }
+                            return null;
+                          }
+                      ),
+                      const SizedBox(height: 16,),
+                      CustomInputField(
+                          labelText: 'Фамилия',
+                          hintText: 'Ваша фамилия',
+                          isDense: true,
+                          validator: (textValue) {
+                            if(textValue == null || textValue.isEmpty) {
+                              return 'Введите фамилию';
                             }
                             return null;
                           }
@@ -101,58 +113,46 @@ class _SignupPageState extends State<SignupPage> {
                       const SizedBox(height: 16,),
                       CustomInputField(
                           labelText: 'Email',
-                          hintText: 'Your email id',
+                          hintText: 'Ваш email',
                           isDense: true,
                           validator: (textValue) {
                             if(textValue == null || textValue.isEmpty) {
-                              return 'Email is required!';
+                              return 'Введите email';
                             }
                             if(!EmailValidator.validate(textValue)) {
-                              return 'Please enter a valid email';
+                              return 'Не существующий email';
                             }
                             return null;
                           }
                       ),
                       const SizedBox(height: 16,),
                       CustomInputField(
-                          labelText: 'Contact no.',
-                          hintText: 'Your contact number',
-                          isDense: true,
-                          validator: (textValue) {
-                            if(textValue == null || textValue.isEmpty) {
-                              return 'Contact number is required!';
-                            }
-                            return null;
-                          }
-                      ),
-                      const SizedBox(height: 16,),
-                      CustomInputField(
-                        labelText: 'Password',
-                        hintText: 'Your password',
+                        labelText: 'Пароль',
+                        hintText: 'Ваш пароль',
                         isDense: true,
                         obscureText: true,
                         validator: (textValue) {
                           if(textValue == null || textValue.isEmpty) {
-                            return 'Password is required!';
+                            return 'Введите пароль';
                           }
                           return null;
                         },
                         suffixIcon: true,
                       ),
                       const SizedBox(height: 22,),
-                      CustomFormButton(innerText: 'Signup', onPressed: _handleSignupUser,),
+                      CustomFormButton(innerText: 'Зарегистрироваться', onPressed: _handleSignupUser,),
                       const SizedBox(height: 18,),
                       SizedBox(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Text('Already have an account ? ', style: TextStyle(fontSize: 13, color: Color(0xff939393), fontWeight: FontWeight.bold),),
+                            const Text('Уже есть аккаунт? ', style: TextStyle(fontSize: 13, color: Color(0xff939393), fontWeight: FontWeight.bold),),
                             GestureDetector(
                               onTap: () => {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()))
                               },
-                              child: const Text('Log-in', style: TextStyle(fontSize: 15, color: Color(0xff748288), fontWeight: FontWeight.bold),),
+                              child: const Text('Войдите', style: TextStyle(fontSize: 15, color: Color(0xff748288), fontWeight: FontWeight.bold),),
                             ),
                           ],
                         ),

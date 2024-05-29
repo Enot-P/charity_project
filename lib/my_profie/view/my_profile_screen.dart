@@ -186,7 +186,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'My Diary',
+                                  'Профиль',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: CharityAppTheme.fontName,

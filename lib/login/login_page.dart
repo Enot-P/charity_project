@@ -41,29 +41,29 @@ class _LoginPageState extends State<LoginPage> {
                       key: _loginFormKey,
                       child: Column(
                         children: [
-                          const PageHeading(title: 'Log-in',),
+                          const PageHeading(title: 'Вход',),
                           CustomInputField(
                             labelText: 'Email',
-                            hintText: 'Your email id',
+                            hintText: 'Ваш email',
                             validator: (textValue) {
                               if(textValue == null || textValue.isEmpty) {
-                                return 'Email is required!';
+                                return 'Введите email';
                               }
                               if(!EmailValidator.validate(textValue)) {
-                                return 'Please enter a valid email';
+                                return '';
                               }
                               return null;
                             }
                           ),
                           const SizedBox(height: 16,),
                           CustomInputField(
-                            labelText: 'Password',
-                            hintText: 'Your password',
+                            labelText: 'Пароль',
+                            hintText: 'Ваш пароль',
                             obscureText: true,
                             suffixIcon: true,
                             validator: (textValue) {
                               if(textValue == null || textValue.isEmpty) {
-                                return 'Password is required!';
+                                return 'Введите пароль';
                               }
                               return null;
                             },
@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgetPasswordPage()))
                               },
                               child: const Text(
-                                'Forget password?',
+                                'Забыли пароль?',
                                 style: TextStyle(
                                   color: Color(0xff939393),
                                   fontSize: 13,
@@ -87,19 +87,19 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 20,),
-                          CustomFormButton(innerText: 'Login', onPressed: _handleLoginUser,),
+                          CustomFormButton(innerText: 'Вход', onPressed: _handleLoginUser,),
                           const SizedBox(height: 18,),
                           SizedBox(
                             width: size.width * 0.8,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text('Don\'t have an account ? ', style: TextStyle(fontSize: 13, color: Color(0xff939393), fontWeight: FontWeight.bold),),
+                                const Text('Нет аккаунта? ', style: TextStyle(fontSize: 13, color: Color(0xff939393), fontWeight: FontWeight.bold),),
                                 GestureDetector(
                                   onTap: () => {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupPage()))
                                   },
-                                  child: const Text('Sign-up', style: TextStyle(fontSize: 15, color: Color(0xff748288), fontWeight: FontWeight.bold),),
+                                  child: const Text('Зарегистрируйтесь', style: TextStyle(fontSize: 15, color: Color(0xff748288), fontWeight: FontWeight.bold),),
                                 ),
                               ],
                             ),

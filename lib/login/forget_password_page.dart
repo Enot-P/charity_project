@@ -1,4 +1,5 @@
 
+import 'package:charity_project/charity_app_home_screen.dart';
 import 'package:charity_project/login/common/custom_form_button.dart';
 import 'package:charity_project/login/common/custom_input_field.dart';
 import 'package:charity_project/login/common/page_header.dart';
@@ -38,32 +39,32 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                     key: _forgetPasswordFormKey,
                     child: Column(
                       children: [
-                        const PageHeading(title: 'Forgot password',),
+                        const PageHeading(title: 'Забыли пароль?',),
                         CustomInputField(
                             labelText: 'Email',
-                            hintText: 'Your email id',
+                            hintText: 'Ваш email',
                             isDense: true,
                             validator: (textValue) {
                               if(textValue == null || textValue.isEmpty) {
-                                return 'Email is required!';
+                                return 'Введите email';
                               }
                               if(!EmailValidator.validate(textValue)) {
-                                return 'Please enter a valid email';
+                                return 'Не существующий email';
                               }
                               return null;
                             }
                         ),
                         const SizedBox(height: 20,),
-                        CustomFormButton(innerText: 'Submit', onPressed: _handleForgetPassword,),
+                        CustomFormButton(innerText: 'Отправить письмо', onPressed: _handleForgetPassword,),
                         const SizedBox(height: 20,),
                         Container(
                           alignment: Alignment.center,
                           child: GestureDetector(
                             onTap: () => {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()))
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const CharityAppHomeScreen()))
                             },
                             child: const Text(
-                              'Back to login',
+                              'Назад ко входу',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Color(0xff939393),
