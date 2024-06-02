@@ -26,6 +26,8 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  get fondData => null;
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -37,12 +39,6 @@ class MyApp extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    FondData fondData = FondData(
-      id: 0,
-      imageUrl: 'assets/images/fond.png',
-      fundName: 'Милосердие',
-      amount: '525',
-    );
     EventData eventData = EventData(
       name: 'AAAAAAAAAAAAAAAAA',
       ownerFondID: 2,

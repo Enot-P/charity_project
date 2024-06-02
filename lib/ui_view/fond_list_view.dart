@@ -2,6 +2,8 @@ import 'package:charity_project/fond_profile/fond_profile_screen.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,16 +20,27 @@ class FondListView extends StatefulWidget {
 
 class _FondListViewState extends State<FondListView> with TickerProviderStateMixin {
   AnimationController? animationController;
+  late Future<List<FondData>> futureFonds;
 
-  final donations = FondData.fondList;
+  Future<List<FondData>> fetchFonds() async {
+    final response = await http.get(Uri.parse('http://192.168.0.112:3000/fonds'));
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((fond) => FondData.fromJson(fond)).toList();
+    } else {
+      throw Exception('Failed to load fonds');
+    }
+  }
 
   @override
   void initState() {
+    super.initState();
     animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    super.initState();
+    futureFonds = fetchFonds();
   }
 
   @override
@@ -50,46 +63,56 @@ class _FondListViewState extends State<FondListView> with TickerProviderStateMix
               height: 500,
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: GridView.builder(
-                padding: const EdgeInsets.only(top: 0, bottom: 16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: donations.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final int count = donations.length;
-                  final Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-                    CurvedAnimation(
-                      parent: animationController!,
-                      curve: Interval((1 / count) * index, 1.0, curve: Curves.fastOutSlowIn),
-                    ),
-                  );
-                  animationController?.forward();
-
-                  final donation = donations[index];
-
-                  return AnimatedDonationItem(
-                    fond: donation,
-                    fundName: donation.fundName,
-                    donationAmount: double.parse(donation.amount),
-                    animation: animation,
-                    animationController: animationController!,
-                    imageUrl: donation.imageUrl,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FondProfileScreen(
-                            fond: donation,
-                            animationController: animationController, // Pass the animation controller
+              child: FutureBuilder<List<FondData>>(
+                future: futureFonds,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No fonds available'));
+                  } else {
+                    return GridView.builder(
+                      padding: const EdgeInsets.only(top: 0, bottom: 16),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 16.0,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final fond = snapshot.data![index];
+                        final Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+                          CurvedAnimation(
+                            parent: animationController!,
+                            curve: Interval((1 / snapshot.data!.length) * index, 1.0, curve: Curves.fastOutSlowIn),
                           ),
-                        ),
-                      );
-                    },
-                  );
+                        );
+                        animationController?.forward();
+                        return AnimatedDonationItem(
+                          fond: fond,
+                          fundName: fond.fundName,
+                          donationAmount: double.parse(fond.amount),
+                          animation: animation,
+                          animationController: animationController!,
+                          imageUrl: fond.imageUrl,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FondProfileScreen(
+                                  fond: fond,
+                                  animationController: animationController, // Pass the animation controller
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),

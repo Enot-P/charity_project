@@ -36,16 +36,6 @@ const upload = multer({ storage });
 // Настройка статического сервера для обслуживания загруженных изображений
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Маршрут для получения всех фондов
-app.get('/fonds', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM Fonds');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 // Маршрут для регистрации пользователя с загрузкой изображения
 app.post('/register', upload.single('profileImage'), async (req, res) => {
@@ -149,6 +139,27 @@ app.get('/user/:id', async (req, res) => {
       imageurl: formattedImageUrl,
       roleName: roleName
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Маршрут для получения всех фондов
+app.get('/fonds', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Fonds');
+    const fonds = result.rows.map(fond => ({
+      id: fond.id_fond,
+      imageUrl: fond.imageurl,
+      fundName: fond.name,
+      amount: fond.balance.toString(),
+      tag: fond.id_tag.toString(), // Предполагается, что тег хранится как строка
+      description: fond.description,
+      contactInfo: `Телефон: ${fond.phone} \nАдрес: ${fond.location} \nE-mail: ${fond.email}`,
+    }));
+    res.json(fonds);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error' });
