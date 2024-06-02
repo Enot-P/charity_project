@@ -15,21 +15,27 @@ class TabIcons extends StatefulWidget {
 class _TabIconsState extends State<TabIcons> with TickerProviderStateMixin {
   @override
   void initState() {
+    super.initState();
     widget.tabIconData?.animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
     )..addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
         if (!mounted) return;
-        widget.removeAllSelect!();
+        widget.removeAllSelect?.call();
         widget.tabIconData?.animationController?.reverse();
       }
     });
-    super.initState();
   }
 
   void setAnimation() {
     widget.tabIconData?.animationController?.forward();
+  }
+
+  @override
+  void dispose() {
+    widget.tabIconData?.animationController?.dispose();
+    super.dispose();
   }
 
   @override

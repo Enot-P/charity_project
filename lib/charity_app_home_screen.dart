@@ -1,4 +1,6 @@
-import 'package:charity_project/charity_list/charity_list_screen.dart';
+
+import 'package:charity_project/events_list/events_list_screen.dart';
+import 'package:charity_project/fond_list/fond_list_screen.dart';
 import 'package:charity_project/models/tabIcon_data.dart';
 import 'package:charity_project/my_profie/view/my_profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -80,29 +82,36 @@ class _CharityAppHomeScreenState extends State<CharityAppHomeScreen>
         BottomBarView(
           tabIconsList: tabIconsList,
           addClick: () {},
-          changeIndex: (int index) {
-            if (index == 0 || index == 2) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  tabBody =
-                      MyProfileScreen(animationController: animationController);
+            changeIndex: (int index) {
+              if (index == 0) {
+                animationController?.reverse().then<dynamic>((data) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(() {
+                    tabBody = MyProfileScreen(animationController: animationController);
+                  });
                 });
-              });
-            } else if (index == 1 || index == 3) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  tabBody =
-                      CharityListScreen(animationController: animationController);
+              } else if (index == 1) {
+                animationController?.reverse().then<dynamic>((data) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(() {
+                    tabBody = EventsListScreen(animationController: animationController);
+                  });
                 });
-              });
-            }
-          },
+              } else if (index == 2) {
+                animationController?.reverse().then<dynamic>((data) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(() {
+                    tabBody = FondListScreen(animationController: animationController);
+                  });
+                });
+              }
+            },
         ),
       ],
     );

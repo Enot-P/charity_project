@@ -32,18 +32,19 @@ class TabIconData {
       animationController: null,
     ),
     TabIconData(
-      imagePath: 'assets/fitness_app/tab_3.png',
-      selectedImagePath: 'assets/fitness_app/tab_3s.png',
+      imagePath: 'assets/fitness_app/tab_1.png',
+      selectedImagePath: 'assets/fitness_app/tab_1s.png',
       index: 2,
       isSelected: false,
       animationController: null,
     ),
     TabIconData(
-      imagePath: 'assets/fitness_app/tab_1.png',
-      selectedImagePath: 'assets/fitness_app/tab_1s.png',
+      imagePath: 'assets/fitness_app/tab_3.png',
+      selectedImagePath: 'assets/fitness_app/tab_3s.png',
       index: 3,
       isSelected: false,
       animationController: null,
     ),
+
   ];
 }

@@ -1,8 +1,6 @@
-
 import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/models/tabIcon_data.dart';
 import 'package:flutter/material.dart';
-
 import 'tab_icons.dart';
 import 'tab_clipper.dart';
 
@@ -64,39 +62,22 @@ class _BottomBarViewState extends State<BottomBarView> with TickerProviderStateM
                                   widget.changeIndex!(0);
                                 }),
                           ),
-                          // Expanded(
-                          //   child: TabIcons(
-                          //       tabIconData: widget.tabIconsList?[1],
-                          //       removeAllSelect: () {
-                          //         setRemoveAllSelection(
-                          //             widget.tabIconsList?[1]);
-                          //         widget.changeIndex!(1);
-                          //       }),
-                          // ),
-                          // SizedBox(
-                          //   width: Tween<double>(begin: 0.0, end: 1.0)
-                          //           .animate(CurvedAnimation(
-                          //               parent: animationController!,
-                          //               curve: Curves.fastOutSlowIn))
-                          //           .value *
-                          //       64.0,
-                          // ),
-                          // Expanded(
-                          //   child: TabIcons(
-                          //       tabIconData: widget.tabIconsList?[2],
-                          //       removeAllSelect: () {
-                          //         setRemoveAllSelection(
-                          //             widget.tabIconsList?[2]);
-                          //         widget.changeIndex!(2);
-                          //       }),
-                          // ),
                           Expanded(
                             child: TabIcons(
-                                tabIconData: widget.tabIconsList?[3],
+                                tabIconData: widget.tabIconsList?[1],
                                 removeAllSelect: () {
                                   setRemoveAllSelection(
-                                      widget.tabIconsList?[3]);
-                                  widget.changeIndex!(3);
+                                      widget.tabIconsList?[1]);
+                                  widget.changeIndex!(1);
+                                }),
+                          ),
+                          Expanded(
+                            child: TabIcons(
+                                tabIconData: widget.tabIconsList?[2],
+                                removeAllSelect: () {
+                                  setRemoveAllSelection(
+                                      widget.tabIconsList?[2]);
+                                  widget.changeIndex!(2);
                                 }),
                           ),
                         ],
@@ -119,7 +100,6 @@ class _BottomBarViewState extends State<BottomBarView> with TickerProviderStateM
       ],
     );
   }
-
 
   // этот метод используется для установки состояния выбранного значка
   // в нижнем навигационном меню, когда пользователь выбирает другой значок
