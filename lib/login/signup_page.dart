@@ -40,7 +40,7 @@ class _SignupPageState extends State<SignupPage> {
   final _signupFormKey = GlobalKey<FormState>();
 
   Future<void> registerUser(String name, String surname, String email, String password, File? profileImage) async {
-    var uri = Uri.parse('http://localhost:3000/register');
+    var uri = Uri.parse('http://192.168.0.112:3000/register');
     var request = http.MultipartRequest('POST', uri)
       ..fields['name'] = name
       ..fields['surname'] = surname
