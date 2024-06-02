@@ -1,14 +1,16 @@
-
+import 'package:charity_project/bottom_navigation_view/view/bottom_bar_view.dart';
+import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/events_list/events_list_screen.dart';
 import 'package:charity_project/fond_list/fond_list_screen.dart';
 import 'package:charity_project/models/tabIcon_data.dart';
+import 'package:charity_project/models/user_data.dart';
 import 'package:charity_project/my_profie/view/my_profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'bottom_navigation_view/view/bottom_bar_view.dart';
-import 'charity_app_theme.dart';
 
 class CharityAppHomeScreen extends StatefulWidget {
-  const CharityAppHomeScreen({super.key});
+  const CharityAppHomeScreen({super.key, required this.userId});
+
+  final int userId;
 
   @override
   _CharityAppHomeScreenState createState() => _CharityAppHomeScreenState();
@@ -33,7 +35,9 @@ class _CharityAppHomeScreenState extends State<CharityAppHomeScreen>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyProfileScreen(animationController: animationController);
+
+    // Используйте переданные данные пользователя
+    tabBody = MyProfileScreen(animationController: animationController, userId: widget.userId);
     super.initState();
   }
 
@@ -82,36 +86,36 @@ class _CharityAppHomeScreenState extends State<CharityAppHomeScreen>
         BottomBarView(
           tabIconsList: tabIconsList,
           addClick: () {},
-            changeIndex: (int index) {
-              if (index == 0) {
-                animationController?.reverse().then<dynamic>((data) {
-                  if (!mounted) {
-                    return;
-                  }
-                  setState(() {
-                    tabBody = MyProfileScreen(animationController: animationController);
-                  });
+          changeIndex: (int index) {
+            if (index == 0) {
+              animationController?.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody = MyProfileScreen(animationController: animationController, userId: widget.userId,);
                 });
-              } else if (index == 1) {
-                animationController?.reverse().then<dynamic>((data) {
-                  if (!mounted) {
-                    return;
-                  }
-                  setState(() {
-                    tabBody = EventsListScreen(animationController: animationController);
-                  });
+              });
+            } else if (index == 1) {
+              animationController?.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody = EventsListScreen(animationController: animationController);
                 });
-              } else if (index == 2) {
-                animationController?.reverse().then<dynamic>((data) {
-                  if (!mounted) {
-                    return;
-                  }
-                  setState(() {
-                    tabBody = FondListScreen(animationController: animationController);
-                  });
+              });
+            } else if (index == 2) {
+              animationController?.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody = FondListScreen(animationController: animationController);
                 });
-              }
-            },
+              });
+            }
+          },
         ),
       ],
     );

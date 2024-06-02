@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
+
 class UserData {
   final int id;
   final String name;
   final String email;
-  final int roleId;
+  final roleId;
   String? secondName;
   String? cardNumber;
   String? imageUrl;
@@ -21,13 +23,13 @@ class UserData {
 
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
-      id: json['ID_user'],
-      name: json['name'],
-      email: json['email'],
-      roleId: json['ID_role'],
+      id: json['id_user'] ?? -1,
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      roleId: json['roleName'] ?? -1,
       secondName: json['secondname'],
       cardNumber: json['card_number'],
-      imageUrl: json['imageUrl'],
+      imageUrl: json['imageurl'],
       password: json['password'],
     );
   }

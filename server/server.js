@@ -25,7 +25,7 @@ const pool = new Pool({
 // Настройка multer для загрузки изображений
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'server/uploads/');
+    cb(null, path.join(__dirname, 'uploads')); // Убедитесь, что путь корректен
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -33,16 +33,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Маршрут для получения всех пользователей
-app.get('/users', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM Users');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+// Настройка статического сервера для обслуживания загруженных изображений
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Маршрут для получения всех фондов
 app.get('/fonds', async (req, res) => {
@@ -58,7 +50,7 @@ app.get('/fonds', async (req, res) => {
 // Маршрут для регистрации пользователя с загрузкой изображения
 app.post('/register', upload.single('profileImage'), async (req, res) => {
   const { name, surname, email, password } = req.body;
-  const profileImage = req.file ? req.file.path : null;
+  const profileImage = req.file ? `uploads/${req.file.filename}` : null;
 
   try {
     // Хешируем пароль
@@ -78,7 +70,6 @@ app.post('/register', upload.single('profileImage'), async (req, res) => {
   }
 });
 
-// Маршрут для входа пользователя
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -103,12 +94,67 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    res.json({ message: 'User logged in successfully' });
+    // Возвращаем данные пользователя
+    res.json({
+      message: 'User logged in successfully',
+      user: {
+        id_user: user.id_user,
+        name: user.name,
+        email: user.email,
+        secondname: user.secondname,
+        card_number: user.card_number,
+        imageurl: `http://192.168.0.112:3000/${user.imageurl.replace(/\\/g, '/').replace('server/', '')}`, // Полный URL изображения
+        id_role: user.id_role
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// Маршрут для получения данных пользователя по id
+app.get('/user/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Получаем данные пользователя
+    const userResult = await pool.query('SELECT * FROM Users WHERE id_user = $1', [id]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const user = userResult.rows[0];
+
+    // Получаем имя роли на основе id_role пользователя
+    const roleResult = await pool.query('SELECT name FROM Roles WHERE id_role = $1', [user.id_role]);
+
+    if (roleResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Role not found' });
+    }
+
+    const roleName = roleResult.rows[0].name;
+
+    // Форматируем URL изображения
+    const formattedImageUrl = `http://192.168.0.112:3000/${user.imageurl.replace(/\\/g, '/').replace('server/', '')}`;
+
+    // Формируем ответ с user данными и roleName
+    res.json({
+      id_user: user.id_user,
+      name: user.name,
+      email: user.email,
+      secondname: user.secondname,
+      card_number: user.card_number,
+      imageurl: formattedImageUrl,
+      roleName: roleName
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Запуск сервера
 app.listen(port, () => {

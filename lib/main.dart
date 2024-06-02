@@ -5,6 +5,7 @@ import 'package:charity_project/fond_profile/fond_profile_screen.dart';
 import 'package:charity_project/login/login_page.dart';
 import 'package:charity_project/models/event_data.dart';
 import 'package:charity_project/models/fond_data.dart';
+import 'package:charity_project/models/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -36,13 +37,13 @@ class MyApp extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    var fondData = FondData(
+    FondData fondData = FondData(
       id: 0,
       imageUrl: 'assets/images/fond.png',
       fundName: 'Милосердие',
       amount: '525',
     );
-    var eventData = EventData(
+    EventData eventData = EventData(
       name: 'AAAAAAAAAAAAAAAAA',
       ownerFondID: 2,
       imageUrl: 'https://example.com/images/event2.jpg',
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
       data_start: '2024-06-02',
       description: 'AAAAAAAAAAAAAAAAAAAAAAAAAA',
     );
+    int userData = -1;
     return MaterialApp(
       title: 'Flutter UI',
       debugShowCheckedModeBanner: false,
@@ -57,7 +59,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/fondList': (context) => const CharityAppHomeScreen(),
+        '/fondList': (context) => CharityAppHomeScreen(userId: userData,),
         '/fondProfile' : (context) => FondProfileScreen(fond: fondData),
         '/eventProfile' : (context) => EventProfileScreen(event: eventData),
         '/' : (context) => const LoginPage(),

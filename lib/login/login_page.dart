@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:charity_project/models/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:charity_project/charity_app_home_screen.dart';
@@ -168,20 +169,17 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       try {
-        // Логируем перед отправкой запроса
-        debugPrint('Sending login request with email: $email and password: $password');
-
         final response = await loginUser(email, password);
 
-        // Логируем после получения ответа
-        debugPrint('Response status: ${response.statusCode}');
-        debugPrint('Response body: ${response.body}');
-
         if (response.statusCode == 200) {
+          final Map<String, dynamic> responseBody = jsonDecode(response.body);
+          final Map<String, dynamic> userDataJson = responseBody['user'];
+          final int userId = userDataJson['id_user'];
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => const CharityAppHomeScreen(),
+              builder: (context) => CharityAppHomeScreen(userId: userId),
             ),
           );
         } else if (response.statusCode == 401) {

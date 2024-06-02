@@ -1,13 +1,18 @@
+import 'dart:convert';
 import 'package:charity_project/charity_app_theme.dart';
+import 'package:charity_project/models/user_data.dart';
 import 'package:charity_project/ui_view/fond_list_view.dart';
 import 'package:charity_project/ui_view/user_profile_view.dart';
 import 'package:charity_project/ui_view/title_view.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class MyProfileScreen extends StatefulWidget {
-  const MyProfileScreen({super.key, this.animationController});
+  const MyProfileScreen({super.key, this.animationController, required this.userId});
 
   final AnimationController? animationController;
+  final int userId;
+
   @override
   _MyProfileScreenState createState() => _MyProfileScreenState();
 }
@@ -15,6 +20,7 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen>
     with TickerProviderStateMixin {
   Animation<double>? topBarAnimation;
+  UserData? userData;
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
@@ -26,7 +32,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         CurvedAnimation(
             parent: widget.animationController!,
             curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    addAllListData();
+    fetchUserData();
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -53,43 +59,55 @@ class _MyProfileScreenState extends State<MyProfileScreen>
     super.initState();
   }
 
+  Future<void> fetchUserData() async {
+    final response = await http.get(Uri.parse('http://192.168.0.112:3000/user/${widget.userId}'));
+    if (response.statusCode == 200) {
+      setState(() {
+        userData = UserData.fromJson(jsonDecode(response.body));
+        addAllListData();
+      });
+    } else {
+      // Обработка ошибки
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to load user data')),
+      );
+    }
+  }
+
   void addAllListData() {
     const int animationDuration = 5;
 
-    listViews.add(
-      UserProfileView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                const Interval((1 / animationDuration) * 1, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-        photoUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9tIsToUJHzHVf0M2bNh-ZHvR_TdqQcy-84-FUsVtoog&s',
-        firstName: 'Никита',
-        lastName: 'Пташкин',
-        role: 'Программист',
-      ),
-    );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Ваши последние пожертвования:',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                const Interval((1 / animationDuration) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
+    if (userData != null) {
+      listViews.add(
+        UserProfileView(
+          animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: widget.animationController!,
+              curve: const Interval((1 / animationDuration) * 1, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: widget.animationController!,
+          userData: userData!,
+        ),
+      );
+      listViews.add(
+        TitleView(
+          titleTxt: 'Ваши последние пожертвования:',
+          animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+              parent: widget.animationController!,
+              curve: const Interval((1 / animationDuration) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+          animationController: widget.animationController!,
+        ),
+      );
 
-    listViews.add(
-      FondListView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController!,
-                curve: const Interval((1 / animationDuration) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
+      listViews.add(
+        FondListView(
+          mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: widget.animationController!,
+                  curve: const Interval((1 / animationDuration) * 3, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+          mainScreenAnimationController: widget.animationController,
+        ),
+      );
+    }
   }
 
   Future<bool> getData() async {
@@ -120,7 +138,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
     return FutureBuilder<bool>(
       future: getData(),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if (!snapshot.hasData) {
+        if (!snapshot.hasData || userData == null) {
           return const SizedBox();
         } else {
           return ListView.builder(

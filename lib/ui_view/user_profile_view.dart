@@ -1,24 +1,18 @@
 import 'package:charity_project/charity_app_theme.dart';
+import 'package:charity_project/models/user_data.dart';
 import 'package:flutter/material.dart';
-
 
 class UserProfileView extends StatelessWidget {
   final AnimationController? animationController;
   final Animation<double>? animation;
 
-  final String photoUrl;
-  final String firstName;
-  final String lastName;
-  final String role;
+  final UserData userData;
 
   const UserProfileView({
     super.key,
     this.animationController,
     this.animation,
-    required this.photoUrl,
-    required this.firstName,
-    required this.lastName,
-    required this.role,
+    required this.userData
   });
 
   @override
@@ -52,20 +46,20 @@ class UserProfileView extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     Padding(
-                      padding:
-                      const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 25),
+                      padding: const EdgeInsets.only(
+                          top: 16, left: 16, right: 16, bottom: 25),
                       child: Row(
                         children: <Widget>[
                           CircleAvatar(
                             radius: 24,
-                            backgroundImage: NetworkImage(photoUrl),
+                            backgroundImage: NetworkImage(userData.imageUrl ?? ''),
                           ),
                           const SizedBox(width: 35),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                firstName,
+                                userData.name,
                                 style: TextStyle(
                                   fontFamily: CharityAppTheme.fontName,
                                   fontWeight: FontWeight.w500,
@@ -75,7 +69,7 @@ class UserProfileView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                lastName,
+                                userData.secondName ?? '',
                                 style: TextStyle(
                                   fontFamily: CharityAppTheme.fontName,
                                   fontWeight: FontWeight.w500,
@@ -96,7 +90,7 @@ class UserProfileView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                role,
+                                '${userData.roleId}',
                                 style: TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w800,
