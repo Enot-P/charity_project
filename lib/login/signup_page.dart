@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'login_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -17,15 +20,61 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Очистите контроллеры, когда они больше не нужны
+    _nameController.dispose();
+    _surnameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   File? _profileImage;
 
   final _signupFormKey = GlobalKey<FormState>();
 
+  Future<void> registerUser(String name, String surname, String email, String password, File? profileImage) async {
+    var uri = Uri.parse('http://localhost:3000/register');
+    var request = http.MultipartRequest('POST', uri)
+      ..fields['name'] = name
+      ..fields['surname'] = surname
+      ..fields['email'] = email
+      ..fields['password'] = password;
+
+    if (profileImage != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'profileImage',
+        profileImage.path,
+      ));
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      // Обработка успешной регистрации
+      // Например, перенаправление пользователя на страницу входа
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    } else {
+      // Обработка ошибки
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed: ${response.reasonPhrase}')),
+      );
+    }
+  }
+
   Future _pickProfileImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if(image == null) return;
+      if (image == null) return;
 
       final imageTemporary = File(image.path);
       setState(() => _profileImage = imageTemporary);
@@ -88,51 +137,55 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       const SizedBox(height: 16,),
                       CustomInputField(
-                          labelText: 'Имя',
-                          hintText: 'Ваше имя',
-                          isDense: true,
-                          validator: (textValue) {
-                            if(textValue == null || textValue.isEmpty) {
-                              return 'Введите имя';
-                            }
-                            return null;
+                        controller: _nameController,
+                        labelText: 'Имя',
+                        hintText: 'Ваше имя',
+                        isDense: true,
+                        validator: (textValue) {
+                          if (textValue == null || textValue.isEmpty) {
+                            return 'Введите имя';
                           }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 16,),
                       CustomInputField(
-                          labelText: 'Фамилия',
-                          hintText: 'Ваша фамилия',
-                          isDense: true,
-                          validator: (textValue) {
-                            if(textValue == null || textValue.isEmpty) {
-                              return 'Введите фамилию';
-                            }
-                            return null;
+                        controller: _surnameController,
+                        labelText: 'Фамилия',
+                        hintText: 'Ваша фамилия',
+                        isDense: true,
+                        validator: (textValue) {
+                          if (textValue == null || textValue.isEmpty) {
+                            return 'Введите фамилию';
                           }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 16,),
                       CustomInputField(
-                          labelText: 'Email',
-                          hintText: 'Ваш email',
-                          isDense: true,
-                          validator: (textValue) {
-                            if(textValue == null || textValue.isEmpty) {
-                              return 'Введите email';
-                            }
-                            if(!EmailValidator.validate(textValue)) {
-                              return 'Не существующий email';
-                            }
-                            return null;
+                        controller: _emailController,
+                        labelText: 'Email',
+                        hintText: 'Ваш email',
+                        isDense: true,
+                        validator: (textValue) {
+                          if (textValue == null || textValue.isEmpty) {
+                            return 'Введите email';
                           }
+                          if (!EmailValidator.validate(textValue)) {
+                            return 'Не существующий email';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 16,),
                       CustomInputField(
+                        controller: _passwordController,
                         labelText: 'Пароль',
                         hintText: 'Ваш пароль',
                         isDense: true,
                         obscureText: true,
                         validator: (textValue) {
-                          if(textValue == null || textValue.isEmpty) {
+                          if (textValue == null || textValue.isEmpty) {
                             return 'Введите пароль';
                           }
                           return null;
@@ -170,11 +223,20 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   void _handleSignupUser() {
-    // signup user
     if (_signupFormKey.currentState!.validate()) {
+      // Получение значений из полей ввода
+      final name = _nameController.text;
+      final surname = _surnameController.text;
+      final email = _emailController.text;
+      final password = _passwordController.text;
+
+      // Показываем сообщение о начале отправки данных
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Submitting data..')),
       );
+
+      // Вызов функции регистрации
+      registerUser(name, surname, email, password, _profileImage);
     }
   }
 }

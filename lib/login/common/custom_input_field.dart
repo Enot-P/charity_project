@@ -7,6 +7,7 @@ class CustomInputField extends StatefulWidget {
   final bool suffixIcon;
   final bool? isDense;
   final bool obscureText;
+  final TextEditingController? controller; // Добавляем параметр controller
 
   const CustomInputField({
     super.key,
@@ -15,7 +16,8 @@ class CustomInputField extends StatefulWidget {
     required this.validator,
     this.suffixIcon = false,
     this.isDense,
-    this.obscureText = false
+    this.obscureText = false,
+    this.controller, // Инициализируем параметр controller
   });
 
   @override
@@ -23,7 +25,6 @@ class CustomInputField extends StatefulWidget {
 }
 
 class _CustomInputFieldState extends State<CustomInputField> {
-  //
   bool _obscureText = true;
 
   @override
@@ -39,6 +40,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
             child: Text(widget.labelText, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
           ),
           TextFormField(
+            controller: widget.controller, // Используем controller
             obscureText: (widget.obscureText && _obscureText),
             decoration: InputDecoration(
               isDense: (widget.isDense != null) ? widget.isDense : false,
