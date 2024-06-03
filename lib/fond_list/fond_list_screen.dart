@@ -1,39 +1,38 @@
+import 'package:charity_project/fond_list/widgets/sort_fonds.dart';
 import 'package:charity_project/models/tag_data.dart';
 import 'package:charity_project/ui_view/fond_list_view.dart';
 import 'package:charity_project/ui_view/running_view.dart';
 import 'package:charity_project/ui_view/title_view.dart';
-
 import 'package:flutter/material.dart';
-
 import '../charity_app_theme.dart';
-
 
 class FondListScreen extends StatefulWidget {
   const FondListScreen({Key? key, this.animationController});
 
   final AnimationController? animationController;
+
   @override
   _FondListScreenState createState() => _FondListScreenState();
 }
 
-class _FondListScreenState extends State<FondListScreen>
-    with TickerProviderStateMixin {
+class _FondListScreenState extends State<FondListScreen> with TickerProviderStateMixin {
   Animation<double>? topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  String _selectedTag = TagData.tags[0]; // Первый тег по умолчанию
-  final List<String> _tags = TagData.getTags();
+  String _selectedTag = 'Выберите тег'; // Первый тег по умолчанию
+  List<String> _tags = ['Выберите тег'];
 
   @override
   void initState() {
+    super.initState();
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: widget.animationController!,
             curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    addAllListData(_selectedTag);
+    _fetchTags();
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -42,8 +41,7 @@ class _FondListScreenState extends State<FondListScreen>
             topBarOpacity = 1.0;
           });
         }
-      } else if (scrollController.offset <= 24 &&
-          scrollController.offset >= 0) {
+      } else if (scrollController.offset <= 24 && scrollController.offset >= 0) {
         if (topBarOpacity != scrollController.offset / 24) {
           setState(() {
             topBarOpacity = scrollController.offset / 24;
@@ -57,7 +55,19 @@ class _FondListScreenState extends State<FondListScreen>
         }
       }
     });
-    super.initState();
+  }
+
+  Future<void> _fetchTags() async {
+    try {
+      List<String> tags = await TagData.fetchTags();
+      setState(() {
+        _tags = ['Выберите тег', ...tags];
+        _updateListByTag(_selectedTag); // Ensure list is updated after fetching tags
+        debugPrint('Fetched tags: $_tags');
+      });
+    } catch (e) {
+      print('Failed to load tags: $e');
+    }
   }
 
   void addAllListData(String tag) {
@@ -67,20 +77,15 @@ class _FondListScreenState extends State<FondListScreen>
       RunningView(
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
-            curve:
-            const Interval((1 / animationDuration) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+            curve: const Interval((1 / animationDuration) * 3, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController!,
       ),
     );
 
     listViews.add(
-      TitleView(
-        titleTxt: 'Список фондов',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-            const Interval((1 / animationDuration) * 4, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
+      SortFonds(
+        tags: _tags,
+        onTagSelected: _updateListByTag,
       ),
     );
 
@@ -91,15 +96,18 @@ class _FondListScreenState extends State<FondListScreen>
                 parent: widget.animationController!,
                 curve: const Interval((1 / animationDuration) * 3, 1.0,
                     curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController, donation: false,
+        mainScreenAnimationController: widget.animationController,
+        donation: false,
       ),
     );
   }
 
   void _updateListByTag(String tag) {
     setState(() {
+      _selectedTag = tag;
       listViews.clear();
       addAllListData(tag);
+      debugPrint('Updated list with tag: $tag');
     });
   }
 
@@ -119,10 +127,7 @@ class _FondListScreenState extends State<FondListScreen>
             getMainListViewUI(),
             getAppBarUI(),
             SizedBox(
-              height: MediaQuery
-                  .of(context)
-                  .padding
-                  .bottom,
+              height: MediaQuery.of(context).padding.bottom,
             )
           ],
         ),
@@ -141,14 +146,8 @@ class _FondListScreenState extends State<FondListScreen>
             controller: scrollController,
             padding: EdgeInsets.only(
               top: AppBar().preferredSize.height +
-                  MediaQuery
-                      .of(context)
-                      .padding
-                      .top + 24,
-              bottom: 62 + MediaQuery
-                  .of(context)
-                  .padding
-                  .bottom,
+                  MediaQuery.of(context).padding.top + 24,
+              bottom: 62 + MediaQuery.of(context).padding.bottom,
             ),
             itemCount: listViews.length,
             scrollDirection: Axis.vertical,
@@ -216,30 +215,6 @@ class _FondListScreenState extends State<FondListScreen>
                               ),
                             ),
                           ),
-                        ),
-                        DropdownButton<String>(
-                          value: _selectedTag,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          iconSize: 24,
-                          elevation: 16,
-                          style: const TextStyle(color: Colors.deepPurple),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.deepPurpleAccent,
-                          ),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedTag = newValue!;
-                              _updateListByTag(newValue);
-                            });
-                          },
-                          items: _tags.map<DropdownMenuItem<String>>((
-                              String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
                         ),
                       ],
                     ),

@@ -4,7 +4,7 @@ import 'package:charity_project/events_list/events_list_screen.dart';
 import 'package:charity_project/fond_list/fond_list_screen.dart';
 import 'package:charity_project/models/tabIcon_data.dart';
 import 'package:charity_project/models/user_data.dart';
-import 'package:charity_project/my_profie/view/my_profile_screen.dart';
+import 'package:charity_project/my_profie/my_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class CharityAppHomeScreen extends StatefulWidget {

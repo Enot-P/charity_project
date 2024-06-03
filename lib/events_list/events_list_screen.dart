@@ -24,8 +24,7 @@ class _EventsListScreenState extends State<EventsListScreen>
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  String _selectedTag = TagData.tags[0]; // Первый тег по умолчанию
-  final List<String> _tags = TagData.getTags();
+  String _selectedTag = ' '; // Первый тег по умолчанию
 
   @override
   void initState() {
@@ -216,30 +215,6 @@ class _EventsListScreenState extends State<EventsListScreen>
                               ),
                             ),
                           ),
-                        ),
-                        DropdownButton<String>(
-                          value: _selectedTag,
-                          icon: const Icon(Icons.arrow_drop_down),
-                          iconSize: 24,
-                          elevation: 16,
-                          style: const TextStyle(color: Colors.deepPurple),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.deepPurpleAccent,
-                          ),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              _selectedTag = newValue!;
-                              _updateListByTag(newValue);
-                            });
-                          },
-                          items: _tags.map<DropdownMenuItem<String>>((
-                              String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
                         ),
                       ],
                     ),
