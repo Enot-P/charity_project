@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пользователи</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Пользователи</h1>
+    <div class="form-section">
+        <h2>Add User</h2>
+        <div class="form-group">
+            <input type="text" id="add-name" placeholder="Name">
+            <input type="text" id="add-secondname" placeholder="Second Name">
+            <input type="email" id="add-email" placeholder="Email">
+            <input type="text" id="add-imageurl" placeholder="Image URL">
+            <input type="number" id="add-role-id" placeholder="Role ID">
+            <input type="password" id="add-password" placeholder="Password">
+            <button onclick="addUser()">Add</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Delete User</h2>
+        <div class="form-group">
+            <input type="number" id="delete-id" placeholder="User ID">
+            <button onclick="deleteUser()">Delete</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Update User</h2>
+        <div class="form-group">
+            <input type="number" id="update-id" placeholder="User ID">
+            <input type="text" id="update-name" placeholder="Name">
+            <input type="text" id="update-secondname" placeholder="Second Name">
+            <input type="email" id="update-email" placeholder="Email">
+            <input type="text" id="update-imageurl" placeholder="Image URL">
+            <input type="number" id="update-role-id" placeholder="Role ID">
+            <input type="password" id="update-password" placeholder="Password">
+            <button onclick="updateUser()">Update</button>
+        </div>
+    </div>
+    <div class="table-section">
+        <h2>Пользователи</h2>
+        <table id="users-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Second Name</th>
+                <th>Email</th>
+                <th>Image URL</th>
+                <th>Role ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Пользователи будут добавлены здесь -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="users.js"></script>
+</body>
+</html>

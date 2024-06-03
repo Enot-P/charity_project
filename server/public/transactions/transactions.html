@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Транзакции</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Транзакции</h1>
+    <div class="form-section">
+        <h2>Add Transaction</h2>
+        <div class="form-group">
+            <input type="number" id="add-sum" placeholder="Sum">
+            <input type="date" id="add-date" placeholder="Date">
+            <input type="number" id="add-fond-id" placeholder="Fond ID">
+            <input type="number" id="add-user-id" placeholder="User ID">
+            <button onclick="addTransaction()">Add</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Delete Transaction</h2>
+        <div class="form-group">
+            <input type="number" id="delete-id" placeholder="Transaction ID">
+            <button onclick="deleteTransaction()">Delete</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Update Transaction</h2>
+        <div class="form-group">
+            <input type="number" id="update-id" placeholder="Transaction ID">
+            <input type="number" id="update-sum" placeholder="Sum">
+            <input type="date" id="update-date" placeholder="Date">
+            <input type="number" id="update-fond-id" placeholder="Fond ID">
+            <input type="number" id="update-user-id" placeholder="User ID">
+            <button onclick="updateTransaction()">Update</button>
+        </div>
+    </div>
+    <div class="table-section">
+        <h2>Транзакции</h2>
+        <table id="transactions-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Sum</th>
+                <th>Date</th>
+                <th>Fond ID</th>
+                <th>User ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Транзакции будут добавлены здесь -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="transactions.js"></script>
+</body>
+</html>

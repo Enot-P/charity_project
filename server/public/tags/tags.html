@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Теги</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Теги</h1>
+    <div class="form-section">
+        <h2>Add Tag</h2>
+        <div class="form-group">
+            <input type="text" id="add-name" placeholder="Tag Name">
+            <button onclick="addTag()">Add</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Delete Tag</h2>
+        <div class="form-group">
+            <input type="number" id="delete-id" placeholder="Tag ID">
+            <button onclick="deleteTag()">Delete</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Update Tag</h2>
+        <div class="form-group">
+            <input type="number" id="update-id" placeholder="Tag ID">
+            <input type="text" id="update-name" placeholder="Tag Name">
+            <button onclick="updateTag()">Update</button>
+        </div>
+    </div>
+    <div class="table-section">
+        <h2>Теги</h2>
+        <table id="tags-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Теги будут добавлены здесь -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="tags.js"></script>
+</body>
+</html>

@@ -28,9 +28,7 @@ flutter:
   assets:
     - assets/
     - assets/fonts/
-    - assets/hotel/
     - assets/images/
-    - assets/fitness_app/
-    - assets/design_course/
-    - assets/introduction_animation/
+    - assets/photos/
+
 

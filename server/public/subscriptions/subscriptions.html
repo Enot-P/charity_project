@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подписки</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Подписки</h1>
+    <div class="form-section">
+        <h2>Add Subscription</h2>
+        <div class="form-group">
+            <input type="number" id="add-user-id" placeholder="User ID">
+            <input type="number" id="add-fond-id" placeholder="Fond ID">
+            <button onclick="addSubscription()">Add</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Delete Subscription</h2>
+        <div class="form-group">
+            <input type="number" id="delete-id" placeholder="Subscription ID">
+            <button onclick="deleteSubscription()">Delete</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Update Subscription</h2>
+        <div class="form-group">
+            <input type="number" id="update-id" placeholder="Subscription ID">
+            <input type="number" id="update-user-id" placeholder="User ID">
+            <input type="number" id="update-fond-id" placeholder="Fond ID">
+            <button onclick="updateSubscription()">Update</button>
+        </div>
+    </div>
+    <div class="table-section">
+        <h2>Подписки</h2>
+        <table id="subscriptions-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Fond ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Подписки будут добавлены здесь -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="subscriptions.js"></script>
+</body>
+</html>

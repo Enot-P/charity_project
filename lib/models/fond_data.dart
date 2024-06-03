@@ -12,7 +12,7 @@ class FondData {
   int id;
   String imageUrl;
   String fundName;
-  String amount;
+  double amount;
   String tag;
   String description;
   String contactInfo;
@@ -22,7 +22,7 @@ class FondData {
       id: json['id'],
       imageUrl: json['imageUrl'],
       fundName: json['fundName'],
-      amount: json['amount'],
+      amount: json['amount'] is String ? double.parse(json['amount']) : json['amount'].toDouble(),
       tag: json['tag'],
       description: json['description'],
       contactInfo: json['contactInfo'],

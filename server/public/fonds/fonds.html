@@ -8,18 +8,20 @@
 </head>
 <body>
 <div class="container">
-    <h1>Редактор Фондов</h1>
+    <h1>Фонд</h1>
     <div class="form-section">
         <h2>Add Fond</h2>
         <div class="form-group">
             <input type="text" id="add-name" placeholder="Fond Name">
             <input type="number" id="add-balance" placeholder="Balance">
             <input type="number" id="add-tag" placeholder="Tag ID">
-            <input type="text" id="add-description" placeholder="Description">
+            <textarea id="add-description" placeholder="Description" maxlength="500"></textarea>
             <input type="text" id="add-phone" placeholder="Phone">
             <input type="text" id="add-location" placeholder="Location">
             <input type="email" id="add-email" placeholder="Email">
             <input type="text" id="add-imageurl" placeholder="Image URL">
+            <input type="number" id="add-owneruser" placeholder="Owner User ID">
+            <input type="text" id="add-requisites" placeholder="Requisites">
             <button onclick="addFond()">Add</button>
         </div>
     </div>
@@ -37,11 +39,13 @@
             <input type="text" id="update-name" placeholder="Fond Name">
             <input type="number" id="update-balance" placeholder="Balance">
             <input type="number" id="update-tag" placeholder="Tag ID">
-            <input type="text" id="update-description" placeholder="Description">
+            <textarea id="update-description" placeholder="Description" maxlength="500"></textarea>
             <input type="text" id="update-phone" placeholder="Phone">
             <input type="text" id="update-location" placeholder="Location">
             <input type="email" id="update-email" placeholder="Email">
             <input type="text" id="update-imageurl" placeholder="Image URL">
+            <input type="number" id="update-owneruser" placeholder="Owner User ID">
+            <input type="text" id="update-requisites" placeholder="Requisites">
             <button onclick="updateFond()">Update</button>
         </div>
     </div>
@@ -52,9 +56,15 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Card Number</th>
+                <th>Requisites</th>
                 <th>Image URL</th>
                 <th>Description</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Balance</th>
+                <th>Owner User ID</th>
+                <th>Tag ID</th>
             </tr>
             </thead>
             <tbody>

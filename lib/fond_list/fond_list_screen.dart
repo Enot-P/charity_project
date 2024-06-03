@@ -91,7 +91,7 @@ class _FondListScreenState extends State<FondListScreen>
                 parent: widget.animationController!,
                 curve: const Interval((1 / animationDuration) * 3, 1.0,
                     curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
+        mainScreenAnimationController: widget.animationController, donation: false,
       ),
     );
   }

@@ -237,6 +237,7 @@ class EventProfileView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 40.0),
           Stack(
             children: [
               Container(
@@ -289,7 +290,7 @@ class EventProfileView extends StatelessWidget {
                 style: const TextStyle(
                   fontFamily: CharityAppTheme.fontName,
                   fontWeight: FontWeight.w500,
-                  fontSize: 16,
+                  fontSize: 14,
                   letterSpacing: 0.5,
                   color: CharityAppTheme.grey,
                 ),
@@ -319,7 +320,7 @@ class EventDescriptionView extends StatelessWidget {
             style: TextStyle(
               fontFamily: CharityAppTheme.fontName,
               fontWeight: FontWeight.w700,
-              fontSize: 18,
+              fontSize: 22,
               letterSpacing: 0.5,
               color: CharityAppTheme.darkerText,
             ),
@@ -330,7 +331,7 @@ class EventDescriptionView extends StatelessWidget {
             style: const TextStyle(
               fontFamily: CharityAppTheme.fontName,
               fontWeight: FontWeight.w400,
-              fontSize: 14,
+              fontSize: 15,
               letterSpacing: 0.2,
               color: CharityAppTheme.grey,
             ),

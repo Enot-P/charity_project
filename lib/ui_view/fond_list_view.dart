@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import 'package:google_fonts/google_fonts.dart';
 
 class FondListView extends StatefulWidget {
   const FondListView(
-      {super.key, this.mainScreenAnimationController, this.mainScreenAnimation});
+      {super.key, this.mainScreenAnimationController, this.mainScreenAnimation, required this.donation});
 
   final AnimationController? mainScreenAnimationController;
   final Animation<double>? mainScreenAnimation;
+  final bool donation;
 
   @override
   _FondListViewState createState() => _FondListViewState();
@@ -94,7 +94,8 @@ class _FondListViewState extends State<FondListView> with TickerProviderStateMix
                         return AnimatedDonationItem(
                           fond: fond,
                           fundName: fond.fundName,
-                          donationAmount: double.parse(fond.amount),
+                          donationAmount: widget.donation ? fond.amount : null,
+                          //donationAmount: fond.amount,
                           animation: animation,
                           animationController: animationController!,
                           imageUrl: fond.imageUrl,
@@ -127,7 +128,7 @@ class AnimatedDonationItem extends StatelessWidget {
   const AnimatedDonationItem({
     super.key,
     required this.fundName,
-    required this.donationAmount,
+    this.donationAmount,
     required this.imageUrl,
     required this.onPressed,
     this.animationController,
@@ -136,7 +137,7 @@ class AnimatedDonationItem extends StatelessWidget {
   });
 
   final String fundName;
-  final double donationAmount;
+  final double? donationAmount;
   final String imageUrl;
   final AnimationController? animationController;
   final Animation<double>? animation;
@@ -216,24 +217,25 @@ class AnimatedDonationItem extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  '${donationAmount.toStringAsFixed(2)} руб',
-                                  style: style.copyWith(
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 14,
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 4.0,
-                                        color: Colors.black.withOpacity(0.6),
-                                        offset: const Offset(2.0, 2.0),
-                                      ),
-                                    ],
+                              if (donationAmount != null)
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    '${donationAmount!.toStringAsFixed(2)} руб',
+                                    style: style.copyWith(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black.withOpacity(0.6),
+                                          offset: const Offset(2.0, 2.0),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
                             ],
                           ),
                         ),

@@ -34,6 +34,10 @@ h2 {
     gap: 10px;
 }
 
+textarea {
+    width: 1522px; height: 153px;
+}
+
 .form-group input {
     flex: 1;
     padding: 10px;

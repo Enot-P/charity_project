@@ -146,16 +146,19 @@ app.get('/user/:id', async (req, res) => {
 });
 
 
-// Маршрут для получения всех фондов
 app.get('/fonds', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM Fonds');
+    const result = await pool.query(`
+      SELECT f.id_fond, f.imageurl, f.name AS fund_name, f.balance, t.name AS tag_name, f.description, f.phone, f.location, f.email
+      FROM Fonds f
+      LEFT JOIN Tags t ON f.id_tag = t.id_tag
+    `);
     const fonds = result.rows.map(fond => ({
       id: fond.id_fond,
       imageUrl: fond.imageurl,
-      fundName: fond.name,
+      fundName: fond.fund_name,
       amount: fond.balance.toString(),
-      tag: fond.id_tag.toString(),
+      tag: fond.tag_name,
       description: fond.description,
       contactInfo: `Телефон: ${fond.phone} \nАдрес: ${fond.location} \nE-mail: ${fond.email}`,
     }));
@@ -203,13 +206,25 @@ app.get('/events', async (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Маршрут для получения всех фондов
+app.get('/get-fonds', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Fonds');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для добавления фонда
 app.post('/add-fond', async (req, res) => {
-  const { name, balance, id_tag, description, phone, location, email, imageurl } = req.body;
+  const { name, balance, id_tag, description, phone, location, email, imageurl, id_owneruser, requisites } = req.body;
 
   try {
     const result = await pool.query(
-      'INSERT INTO Fonds (name, balance, id_tag, description, phone, location, email, imageurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [name, balance, id_tag, description, phone, location, email, imageurl]
+        'INSERT INTO Fonds (name, balance, id_tag, description, phone, location, email, imageurl, id_owneruser, requisites) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+        [name, balance, id_tag, description, phone, location, email, imageurl, id_owneruser, requisites]
     );
     res.json({ message: 'Fond added successfully', fond: result.rows[0] });
   } catch (err) {
@@ -218,6 +233,7 @@ app.post('/add-fond', async (req, res) => {
   }
 });
 
+// Маршрут для удаления фонда
 app.delete('/delete-fond/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -233,14 +249,15 @@ app.delete('/delete-fond/:id', async (req, res) => {
   }
 });
 
+// Маршрут для обновления фонда
 app.put('/update-fond/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, balance, id_tag, description, phone, location, email, imageurl } = req.body;
+  const { name, balance, id_tag, description, phone, location, email, imageurl, id_owneruser, requisites } = req.body;
 
   try {
     const result = await pool.query(
-      'UPDATE Fonds SET name = $1, balance = $2, id_tag = $3, description = $4, phone = $5, location = $6, email = $7, imageurl = $8 WHERE id_fond = $9 RETURNING *',
-      [name, balance, id_tag, description, phone, location, email, imageurl, id]
+        'UPDATE Fonds SET name = $1, balance = $2, id_tag = $3, description = $4, phone = $5, location = $6, email = $7, imageurl = $8, id_owneruser = $9, requisites = $10 WHERE id_fond = $11 RETURNING *',
+        [name, balance, id_tag, description, phone, location, email, imageurl, id_owneruser, requisites, id]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Fond not found' });
@@ -251,18 +268,6 @@ app.put('/update-fond/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-// Маршрут для получения всех фондов
-app.get('/get-fonds', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM Fonds');
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
 // Маршрут для получения всех ивентов
 app.get('/get-events', async (req, res) => {
   try {
@@ -320,6 +325,356 @@ app.put('/update-event/:id', async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
     res.json({ message: 'Event updated successfully', event: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для получения всех ролей
+app.get('/get-roles', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Roles');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для добавления роли
+app.post('/add-role', async (req, res) => {
+  const { name } = req.body;
+
+  try {
+    const result = await pool.query(
+        'INSERT INTO Roles (name) VALUES ($1) RETURNING *',
+        [name]
+    );
+    res.json({ message: 'Role added successfully', role: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для удаления роли
+app.delete('/delete-role/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM Roles WHERE id_role = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Role not found' });
+    }
+    res.json({ message: 'Role deleted successfully', role: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для изменения роли
+app.put('/update-role/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  try {
+    const result = await pool.query(
+        'UPDATE Roles SET name = $1 WHERE id_role = $2 RETURNING *',
+        [name, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Role not found' });
+    }
+    res.json({ message: 'Role updated successfully', role: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для получения всех подписок
+app.get('/get-subscriptions', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Subscriptions');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для добавления подписки
+app.post('/add-subscription', async (req, res) => {
+  const { user_id: id_user, fond_id: id_fond } = req.body;
+
+  try {
+    const result = await pool.query(
+        'INSERT INTO Subscriptions (user_id, fond_id) VALUES ($1, $2) RETURNING *',
+        [id_user, id_fond]
+    );
+    res.json({ message: 'Subscription added successfully', subscription: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для удаления подписки
+app.delete('/delete-subscription/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM Subscriptions WHERE id_subscription = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Subscription not found' });
+    }
+    res.json({ message: 'Subscription deleted successfully', subscription: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для изменения подписки
+app.put('/update-subscription/:id', async (req, res) => {
+  const { id } = req.params;
+  const { user_id: id_user, fond_id: id_fond } = req.body;
+
+  try {
+    const result = await pool.query(
+        'UPDATE Subscriptions SET user_id = $1, fond_id = $2 WHERE id_subscription = $3 RETURNING *',
+        [id_user, id_fond, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Subscription not found' });
+    }
+    res.json({ message: 'Subscription updated successfully', subscription: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для получения всех тегов
+app.get('/get-tags', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Tags');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для добавления тега
+app.post('/add-tag', async (req, res) => {
+  const { name } = req.body;
+
+  try {
+    const result = await pool.query(
+        'INSERT INTO Tags (name) VALUES ($1) RETURNING *',
+        [name]
+    );
+    res.json({ message: 'Tag added successfully', tag: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для удаления тега
+app.delete('/delete-tag/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM Tags WHERE id_tag = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Tag not found' });
+    }
+    res.json({ message: 'Tag deleted successfully', tag: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для изменения тега
+app.put('/update-tag/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  try {
+    const result = await pool.query(
+        'UPDATE Tags SET name = $1 WHERE id_tag = $2 RETURNING *',
+        [name, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Tag not found' });
+    }
+    res.json({ message: 'Tag updated successfully', tag: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для получения всех транзакций
+app.get('/get-transactions', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Transactions');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для добавления транзакции
+app.post('/add-transaction', async (req, res) => {
+  const { sum, date, fond_id, user_id } = req.body;
+
+  try {
+    const result = await pool.query(
+        'INSERT INTO Transactions (sum, data_transaction, id_fond, id_user) VALUES ($1, $2, $3, $4) RETURNING *',
+        [sum, date, fond_id, user_id]
+    );
+    res.json({ message: 'Transaction added successfully', transaction: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для удаления транзакции
+app.delete('/delete-transaction/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM Transactions WHERE id_transaction = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+    res.json({ message: 'Transaction deleted successfully', transaction: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для изменения транзакции
+app.put('/update-transaction/:id', async (req, res) => {
+  const { id } = req.params;
+  const { sum, date, fond_id, user_id } = req.body;
+
+  try {
+    const result = await pool.query(
+        'UPDATE Transactions SET sum = $1, data_transaction = $2, id_fond = $3, id_user = $4 WHERE id_transaction = $5 RETURNING *',
+        [sum, date, fond_id, user_id, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+    res.json({ message: 'Transaction updated successfully', transaction: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для получения всех пользователей
+app.get('/get-users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id_user, name, secondname, email, imageurl, id_role FROM Users');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для добавления пользователя
+app.post('/add-user', async (req, res) => {
+  const { name, secondname, email, imageurl, id_role, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+        'INSERT INTO Users (name, secondname, email, imageurl, id_role, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        [name, secondname, email, imageurl, id_role, hashedPassword]
+    );
+    res.json({ message: 'User added successfully', user: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.delete('/delete-user/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Начинаем транзакцию
+    await pool.query('BEGIN');
+
+    // Удаляем зависимости в таблице subscriptions
+    await pool.query('DELETE FROM subscriptions WHERE id_user = $1', [id]);
+
+    // Удаляем зависимости в таблице transactions
+    await pool.query('DELETE FROM transactions WHERE id_user = $1', [id]);
+
+    // Получаем все фонды, связанные с пользователем
+    const fonds = await pool.query('SELECT id_fond FROM fonds WHERE id_owneruser = $1', [id]);
+
+    // Удаляем зависимости в таблице events для каждого фонда
+    for (let fond of fonds.rows) {
+      await pool.query('DELETE FROM events WHERE id_ownerfond = $1', [fond.id_fond]);
+    }
+
+    // Удаляем фонды, связанные с пользователем
+    await pool.query('DELETE FROM fonds WHERE id_owneruser = $1', [id]);
+
+    // Удаляем пользователя
+    const result = await pool.query('DELETE FROM Users WHERE id_user = $1 RETURNING *', [id]);
+
+    // Проверяем, был ли пользователь найден и удален
+    if (result.rows.length === 0) {
+      await pool.query('ROLLBACK');
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Завершаем транзакцию
+    await pool.query('COMMIT');
+    res.json({ message: 'User deleted successfully', user: result.rows[0] });
+  } catch (err) {
+    // Откатываем транзакцию в случае ошибки
+    await pool.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Маршрут для изменения пользователя
+app.put('/update-user/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, secondname, email, imageurl, id_role, password } = req.body;
+
+  try {
+    let hashedPassword = null;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const result = await pool.query(
+        'UPDATE Users SET name = $1, secondname = $2, email = $3, imageurl = $4, id_role = $5, password = COALESCE($6, password) WHERE id_user = $7 RETURNING *',
+        [name, secondname, email, imageurl, id_role, hashedPassword, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User updated successfully', user: result.rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal Server Error' });

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Роли</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Роли</h1>
+    <div class="form-section">
+        <h2>Add Role</h2>
+        <div class="form-group">
+            <input type="text" id="add-name" placeholder="Role Name">
+            <button onclick="addRole()">Add</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Delete Role</h2>
+        <div class="form-group">
+            <input type="number" id="delete-id" placeholder="Role ID">
+            <button onclick="deleteRole()">Delete</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Update Role</h2>
+        <div class="form-group">
+            <input type="number" id="update-id" placeholder="Role ID">
+            <input type="text" id="update-name" placeholder="Role Name">
+            <button onclick="updateRole()">Update</button>
+        </div>
+    </div>
+    <div class="table-section">
+        <h2>Роли</h2>
+        <table id="roles-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Роли будут добавлены здесь -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="roles.js"></script>
+</body>
+</html>
