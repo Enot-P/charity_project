@@ -28,6 +28,8 @@ class MyApp extends StatelessWidget {
 
   get fondData => null;
 
+  get eventData => null;
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -39,14 +41,6 @@ class MyApp extends StatelessWidget {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    EventData eventData = EventData(
-      name: 'AAAAAAAAAAAAAAAAA',
-      ownerFondID: 2,
-      imageUrl: 'https://example.com/images/event2.jpg',
-      location: 'Location 2',
-      data_start: '2024-06-02',
-      description: 'AAAAAAAAAAAAAAAAAAAAAAAAAA',
-    );
     int userData = -1;
     return MaterialApp(
       title: 'Flutter UI',

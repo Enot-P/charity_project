@@ -1,6 +1,7 @@
 import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/models/event_data.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventProfileScreen extends StatefulWidget {
   const EventProfileScreen({super.key, required this.event, this.animationController});
@@ -56,7 +57,7 @@ class _EventProfileScreenState extends State<EventProfileScreen> with TickerProv
       } else if (scrollController.offset <= 24 && scrollController.offset >= 0) {
         if (topBarOpacity != scrollController.offset / 24) {
           setState(() {
-            topBarOpacity = scrollController.offset / 24;
+            //topBarOpacity = scrollController.offset / 24);
           });
         }
       } else if (scrollController.offset <= 0) {
@@ -174,14 +175,14 @@ class _EventProfileScreenState extends State<EventProfileScreen> with TickerProv
                           children: <Widget>[
                             Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(0),
                                 child: Text(
                                   widget.event.name,
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: CharityAppTheme.fontName,
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 22 + 6 - 6 * topBarOpacity,
+                                    fontSize: 20 + 6 - 6 * topBarOpacity,
                                     letterSpacing: 1.2,
                                     color: CharityAppTheme.darkerText,
                                   ),
@@ -206,10 +207,31 @@ class _EventProfileScreenState extends State<EventProfileScreen> with TickerProv
 class EventProfileView extends StatelessWidget {
   final EventData event;
 
+  String getFormattedDate(String eventDate) {
+    final eventDateTime = DateTime.parse(eventDate);
+    final now = DateTime.now();
+    final difference = eventDateTime.difference(now).inDays;
+
+    if (difference == 1) {
+      return 'Завтра';
+    } else if (difference == 2) {
+      return 'Послезавтра';
+    } else if (difference > 2 && difference <= 7) {
+      return 'Через $difference дня';
+    } else {
+      final DateFormat formatter = DateFormat('dd MMMM, EEEE', 'ru');
+      return formatter.format(eventDateTime);
+    }
+  }
+
   const EventProfileView({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
+    // Определяем, является ли изображение локальным или сетевым
+    final bool isNetworkImage = event.imageUrl.startsWith('http') || event.imageUrl.startsWith('https');
+    final bool isFondLogoNetworkImage = event.ownerFondLogoUrl.startsWith('http') || event.ownerFondLogoUrl.startsWith('https');
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -230,7 +252,14 @@ class EventProfileView extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16.0),
-                  child: Image.asset(
+                  child: isNetworkImage
+                      ? Image.network(
+                    event.imageUrl,
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  )
+                      : Image.asset(
                     event.imageUrl,
                     width: double.infinity,
                     height: 200,
@@ -243,19 +272,21 @@ class EventProfileView extends StatelessWidget {
                 left: 16,
                 child: CircleAvatar(
                   radius: 24,
-                  backgroundImage: AssetImage('assets/images/fond.png'), // URL логотипа фонда @!@#!@!@#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                  backgroundImage: isFondLogoNetworkImage
+                      ? NetworkImage(event.ownerFondLogoUrl)
+                      : AssetImage(event.ownerFondLogoUrl) as ImageProvider,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Row(
             children: [
-              Icon(Icons.calendar_today, color: CharityAppTheme.grey),
-              SizedBox(width: 8.0),
+              const Icon(Icons.calendar_today, color: CharityAppTheme.grey),
+              const SizedBox(width: 8.0),
               Text(
-                'Дата начала: ${event.data_start}',
-                style: TextStyle(
+                'Дата начала: ${getFormattedDate(event.data_start)}',
+                style: const TextStyle(
                   fontFamily: CharityAppTheme.fontName,
                   fontWeight: FontWeight.w500,
                   fontSize: 16,
@@ -283,7 +314,7 @@ class EventDescriptionView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Описание',
             style: TextStyle(
               fontFamily: CharityAppTheme.fontName,
@@ -293,10 +324,10 @@ class EventDescriptionView extends StatelessWidget {
               color: CharityAppTheme.darkerText,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             event.description,
-            style: TextStyle(
+            style: const TextStyle(
               fontFamily: CharityAppTheme.fontName,
               fontWeight: FontWeight.w400,
               fontSize: 14,

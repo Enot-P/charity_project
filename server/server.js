@@ -166,6 +166,41 @@ app.get('/fonds', async (req, res) => {
   }
 });
 
+app.get('/events', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        e.id_event,
+        e.name AS event_name,
+        e.description AS event_description,
+        e.location AS event_location,
+        e.data_start AS event_start_date,
+        e.imageurl AS event_image_url,
+        f.id_fond,
+        f.name AS fond_name,
+        f.imageurl AS ownerFondLogoUrl -- Используем imageurl для логотипа фонда
+      FROM
+        events e
+      JOIN
+        fonds f ON e.id_ownerfond = f.id_fond
+    `);
+    const events = result.rows.map(event => ({
+      id: event.id_event,
+      name: event.event_name,
+      description: event.event_description,
+      location: event.event_location,
+      data_start: event.event_start_date,
+      imageUrl: event.event_image_url,
+      ownerFondID: event.id_fond,
+      ownerFondLogoUrl: event.ownerfondlogourl,
+    }));
+    res.json(events);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Запуск сервера
 app.listen(port, () => {

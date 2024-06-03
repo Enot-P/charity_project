@@ -2,6 +2,8 @@ import 'package:charity_project/event_profile/event_profile_screen.dart';
 import 'package:charity_project/models/event_data.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,22 +20,33 @@ class EventsListView extends StatefulWidget {
 
 class _EventsListViewState extends State<EventsListView> with TickerProviderStateMixin {
   AnimationController? animationController;
-
-  final events = EventData.eventList;
+  late Future<List<EventData>> futureEvents;
 
   @override
   void initState() {
+    super.initState();
     animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    super.initState();
+    futureEvents = fetchEvents();
   }
 
   @override
   void dispose() {
     animationController?.dispose();
     super.dispose();
+  }
+
+  Future<List<EventData>> fetchEvents() async {
+    final response = await http.get(Uri.parse('http://192.168.0.112:3000/events'));
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse.map((event) => EventData.fromJson(event)).toList();
+    } else {
+      throw Exception('Failed to load events');
+    }
   }
 
   @override
@@ -50,40 +63,51 @@ class _EventsListViewState extends State<EventsListView> with TickerProviderStat
               height: 500,
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 0, bottom: 16),
-                itemCount: events.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final int count = events.length;
-                  final Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-                    CurvedAnimation(
-                      parent: animationController!,
-                      curve: Interval((1 / count) * index, 1.0, curve: Curves.fastOutSlowIn),
-                    ),
-                  );
-                  animationController?.forward();
-
-                  final event = events[index];
-
-                  return AnimatedEventItem(
-                    event: event,
-                    eventName: event.name,
-                    eventDate: event.data_start,
-                    animation: animation,
-                    animationController: animationController!,
-                    imageUrl: event.imageUrl,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EventProfileScreen(
-                            event: event,
-                            animationController: animationController, // Pass the animation controller
+              child: FutureBuilder<List<EventData>>(
+                future: futureEvents,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No events available'));
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(top: 0, bottom: 16),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final event = snapshot.data![index];
+                        final Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+                          CurvedAnimation(
+                            parent: animationController!,
+                            curve: Interval((1 / snapshot.data!.length) * index, 1.0, curve: Curves.fastOutSlowIn),
                           ),
-                        ),
-                      );
-                    },
-                  );
+                        );
+                        animationController?.forward();
+
+                        return AnimatedEventItem(
+                          event: event,
+                          eventName: event.name,
+                          eventDate: event.data_start,
+                          animation: animation,
+                          animationController: animationController!,
+                          imageUrl: event.imageUrl,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventProfileScreen(
+                                  event: event,
+                                  animationController: animationController, // Pass the animation controller
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),

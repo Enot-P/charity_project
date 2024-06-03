@@ -1,64 +1,34 @@
 class EventData {
   EventData({
-    this.name = '',
-    this.ownerFondID = -1,
-    this.imageUrl = '',
-    this.location = '',
-    this.data_start = '',
-    this.description = '',
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.location,
+    required this.data_start,
+    required this.imageUrl,
+    required this.ownerFondID,
+    required this.ownerFondLogoUrl, // Новое поле для URL логотипа фонда
   });
 
+  int id;
   String name;
-  String imageUrl;
-  int ownerFondID;
+  String description;
   String location;
   String data_start;
-  String description;
+  String imageUrl;
+  int ownerFondID;
+  String ownerFondLogoUrl; // Новое поле
 
-  static List<EventData> eventList = <EventData>[
-    EventData(
-      name: 'Event 1',
-      ownerFondID: 1,
-      imageUrl: 'assets/fitness_app/event_run.jpg',
-      location: 'Location 1',
-      data_start: '2024-06-01',
-      description: 'This is the first event.',
-    ),
-    EventData(
-      name: 'Event 2',
-      ownerFondID: 2,
-      imageUrl: 'assets/fitness_app/event_run.jpg',
-      location: 'Location 2',
-      data_start: '2024-06-02',
-      description: 'This is the second event.',
-    ),
-  ];
+  factory EventData.fromJson(Map<String, dynamic> json) {
+    return EventData(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      location: json['location'],
+      data_start: json['data_start'],
+      imageUrl: json['imageUrl'],
+      ownerFondID: json['ownerFondID'],
+      ownerFondLogoUrl: json['ownerFondLogoUrl'], // Новое поле
+    );
+  }
 }
-
-
-// Фонд "Доброе сердце" создан для помощи людям, оказавшимся в трудной жизненной ситуации. Мы стремимся улучшить их жизнь, предоставляя материальную поддержку, социальные услуги и психологическую помощь.
-//
-// Цели:
-//
-// Оказывать адресную материальную помощь нуждающимся семьям и одиноким людям.
-// Развивать социальные программы для поддержки людей с ограниченными возможностями, детей-сирот и детей из неблагополучных семей.
-// Оказывать психологическую помощь людям, пережившим стрессовые ситуации, травмы или потери.
-// Содействовать развитию культуры благотворительности и волонтерства.
-// Деятельность:
-//
-// Сбор и распределение средств, полученных от пожертвований и грантов.
-// Реализация социальных программ, направленных на поддержку различных категорий нуждающихся людей.
-// Предоставление психологической помощи и консультаций.
-// Проведение благотворительных мероприятий и акций.
-// Сотрудничество с государственными и некоммерческими организациями.
-// Влияние:
-//
-// За время своей работы фонд "Доброе сердце" оказал помощь тысячам людей. Мы помогли нуждающимся семьям улучшить их материальное положение, детям-сиротам обрести дом и заботу, людям с ограниченными возможностями – социализироваться и найти свое место в жизни. Мы также внесли свой вклад в развитие культуры благотворительности и волонтерства в нашем регионе.
-//
-// Как помочь:
-//
-// Вы можете сделать пожертвование на расчетный счет фонда.
-// Вы можете стать волонтером и помогать в реализации социальных программ.
-// Вы можете пожертвовать вещи, продукты питания или лекарства.
-// Вы можете распространять информацию о фонде и его деятельности.
-// Вместе мы можем сделать мир добрее!
