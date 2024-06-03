@@ -6,7 +6,7 @@ function addEvent() {
     const imageurl = document.getElementById('add-imageurl').value;
     const fond_id = document.getElementById('add-fond-id').value;
 
-    fetch('/add-event', {
+    fetch('http://192.168.0.112:3000/add-event', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -23,7 +23,7 @@ function addEvent() {
 function deleteEvent() {
     const id = document.getElementById('delete-id').value;
 
-    fetch(`/delete-event/${id}`, {
+    fetch(`http://192.168.0.112:3000/delete-event/${id}`, {
         method: 'DELETE'
     })
         .then(response => response.json())
@@ -42,7 +42,7 @@ function updateEvent() {
     const imageurl = document.getElementById('update-imageurl').value;
     const fond_id = document.getElementById('update-fond-id').value;
 
-    fetch(`/update-event/${id}`, {
+    fetch(`http://192.168.0.112:3000/update-event/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -57,7 +57,7 @@ function updateEvent() {
 }
 
 function loadEvents() {
-    fetch('/get-events')
+    fetch('http://192.168.0.112:3000/get-events')
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('events-table').getElementsByTagName('tbody')[0];
