@@ -148,11 +148,18 @@ app.get('/user/:id', async (req, res) => {
 
 app.get('/fonds', async (req, res) => {
   try {
-    const result = await pool.query(`
+    const tag = req.query.tag; // Получаем тег из параметров запроса
+    let query = `
       SELECT f.id_fond, f.imageurl, f.name AS fund_name, f.balance, t.name AS tag_name, f.description, f.phone, f.location, f.email
       FROM Fonds f
       LEFT JOIN Tags t ON f.id_tag = t.id_tag
-    `);
+    `;
+
+    if (tag) {
+      query += ` WHERE t.name = $1`;
+    }
+
+    const result = await pool.query(query, tag ? [tag] : []);
     const fonds = result.rows.map(fond => ({
       id: fond.id_fond,
       imageUrl: fond.imageurl,
@@ -168,6 +175,7 @@ app.get('/fonds', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.get('/events', async (req, res) => {
   try {

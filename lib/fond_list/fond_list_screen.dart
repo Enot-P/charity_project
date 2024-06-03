@@ -1,10 +1,11 @@
-import 'package:charity_project/fond_list/widgets/sort_fonds.dart';
-import 'package:charity_project/models/tag_data.dart';
-import 'package:charity_project/ui_view/fond_list_view.dart';
-import 'package:charity_project/ui_view/running_view.dart';
-import 'package:charity_project/ui_view/title_view.dart';
 import 'package:flutter/material.dart';
-import '../charity_app_theme.dart';
+import 'package:charity_project/models/tag_data.dart';
+import 'package:charity_project/ui_view/running_view.dart';
+import 'package:charity_project/ui_view/fond_list_view.dart';
+import 'package:charity_project/charity_app_theme.dart';
+import 'package:charity_project/models/fond_data.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class FondListScreen extends StatefulWidget {
   const FondListScreen({Key? key, this.animationController});
@@ -21,6 +22,8 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
+
+  List<FondData> _allFonds = []; // Новый список для хранения всех фондов
 
   String _selectedTag = 'Выберите тег'; // Первый тег по умолчанию
   List<String> _tags = ['Выберите тег'];
@@ -63,10 +66,26 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
       setState(() {
         _tags = ['Выберите тег', ...tags];
         _updateListByTag(_selectedTag); // Ensure list is updated after fetching tags
-        debugPrint('Fetched tags: $_tags');
       });
     } catch (e) {
       print('Failed to load tags: $e');
+    }
+  }
+
+  void _fetchFonds(String tag) async {
+    final encodedTag = Uri.encodeComponent(tag);
+    final response = await http.get(
+      Uri.parse('http://192.168.0.112:3000/fonds${tag != 'Выберите тег' ? '?tag=$encodedTag' : ''}'),
+    );
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        _allFonds = data.map((json) => FondData.fromJson(json)).toList();
+        _updateListView(); // Update the list after fetching new data
+        debugPrint('Fetched fonds: ${_allFonds.map((fond) => fond.fundName).toList()}');
+      });
+    } else {
+      throw Exception('Failed to load fonds');
     }
   }
 
@@ -83,33 +102,64 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
     );
 
     listViews.add(
-      SortFonds(
-        tags: _tags,
-        onTagSelected: _updateListByTag,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: DropdownButtonFormField<String>(
+          value: _selectedTag,
+          decoration: InputDecoration(
+            labelText: 'Выберите тег',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          ),
+          items: _tags.map((String tag) {
+            return DropdownMenuItem<String>(
+              value: tag,
+              child: Text(tag),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              _updateListByTag(newValue);
+            }
+          },
+        ),
       ),
     );
 
-    listViews.add(
-      FondListView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController!,
-                curve: const Interval((1 / animationDuration) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-        donation: false,
-      ),
-    );
+      listViews.add(
+        FondListView(
+            fondDataList: _allFonds,
+            mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: widget.animationController!,
+                  curve: const Interval((1 / animationDuration) * 3, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+          mainScreenAnimationController: widget.animationController,
+          donation: false,
+        ),
+
+      );
   }
 
   void _updateListByTag(String tag) {
     setState(() {
       _selectedTag = tag;
-      listViews.clear();
-      addAllListData(tag);
-      debugPrint('Updated list with tag: $tag');
     });
+    _fetchFonds(tag);
   }
+
+  void _updateListView() {
+    print('Before clearing listViews: $listViews');
+    setState(() {
+      listViews.clear();
+      addAllListData(_selectedTag);
+    });
+    print('After updating listViews: $listViews');
+  }
+
+
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
@@ -143,6 +193,7 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
           return const SizedBox();
         } else {
           return ListView.builder(
+            key: UniqueKey(), // Добавляем ключ, чтобы ListView перестраивался при изменении listViews
             controller: scrollController,
             padding: EdgeInsets.only(
               top: AppBar().preferredSize.height +
@@ -160,6 +211,7 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
       },
     );
   }
+
 
   Widget getAppBarUI() {
     return Column(
