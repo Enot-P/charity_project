@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фонд</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Редактор Фондов</h1>
+    <div class="form-section">
+        <h2>Add Fond</h2>
+        <div class="form-group">
+            <input type="text" id="add-name" placeholder="Fond Name">
+            <input type="number" id="add-balance" placeholder="Balance">
+            <input type="number" id="add-tag" placeholder="Tag ID">
+            <input type="text" id="add-description" placeholder="Description">
+            <input type="text" id="add-phone" placeholder="Phone">
+            <input type="text" id="add-location" placeholder="Location">
+            <input type="email" id="add-email" placeholder="Email">
+            <input type="text" id="add-imageurl" placeholder="Image URL">
+            <button onclick="addFond()">Add</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Delete Fond</h2>
+        <div class="form-group">
+            <input type="number" id="delete-id" placeholder="Fond ID">
+            <button onclick="deleteFond()">Delete</button>
+        </div>
+    </div>
+    <div class="form-section">
+        <h2>Update Fond</h2>
+        <div class="form-group">
+            <input type="number" id="update-id" placeholder="Fond ID">
+            <input type="text" id="update-name" placeholder="Fond Name">
+            <input type="number" id="update-balance" placeholder="Balance">
+            <input type="number" id="update-tag" placeholder="Tag ID">
+            <input type="text" id="update-description" placeholder="Description">
+            <input type="text" id="update-phone" placeholder="Phone">
+            <input type="text" id="update-location" placeholder="Location">
+            <input type="email" id="update-email" placeholder="Email">
+            <input type="text" id="update-imageurl" placeholder="Image URL">
+            <button onclick="updateFond()">Update</button>
+        </div>
+    </div>
+    <div class="table-section">
+        <h2>Фонды</h2>
+        <table id="fonds-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Card Number</th>
+                <th>Image URL</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Фонды будут добавлены здесь -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="fonds.js"></script>
+</body>
+</html>

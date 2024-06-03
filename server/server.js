@@ -155,7 +155,7 @@ app.get('/fonds', async (req, res) => {
       imageUrl: fond.imageurl,
       fundName: fond.name,
       amount: fond.balance.toString(),
-      tag: fond.id_tag.toString(), // Предполагается, что тег хранится как строка
+      tag: fond.id_tag.toString(),
       description: fond.description,
       contactInfo: `Телефон: ${fond.phone} \nАдрес: ${fond.location} \nE-mail: ${fond.email}`,
     }));
@@ -201,6 +201,130 @@ app.get('/events', async (req, res) => {
   }
 });
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/add-fond', async (req, res) => {
+  const { name, balance, id_tag, description, phone, location, email, imageurl } = req.body;
+
+  try {
+    const result = await pool.query(
+      'INSERT INTO Fonds (name, balance, id_tag, description, phone, location, email, imageurl) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [name, balance, id_tag, description, phone, location, email, imageurl]
+    );
+    res.json({ message: 'Fond added successfully', fond: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.delete('/delete-fond/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM Fonds WHERE id_fond = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Fond not found' });
+    }
+    res.json({ message: 'Fond deleted successfully', fond: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.put('/update-fond/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, balance, id_tag, description, phone, location, email, imageurl } = req.body;
+
+  try {
+    const result = await pool.query(
+      'UPDATE Fonds SET name = $1, balance = $2, id_tag = $3, description = $4, phone = $5, location = $6, email = $7, imageurl = $8 WHERE id_fond = $9 RETURNING *',
+      [name, balance, id_tag, description, phone, location, email, imageurl, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Fond not found' });
+    }
+    res.json({ message: 'Fond updated successfully', fond: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для получения всех фондов
+app.get('/get-fonds', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Fonds');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для получения всех ивентов
+app.get('/get-events', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM Events');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для добавления ивента
+app.post('/add-event', async (req, res) => {
+  const { name, description, location, date, imageurl, fond_id } = req.body;
+
+  try {
+    const result = await pool.query(
+        'INSERT INTO Events (name, description, location, data_start, imageurl, id_ownerfond) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        [name, description, location, date, imageurl, fond_id]
+    );
+    res.json({ message: 'Event added successfully', event: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для удаления ивента
+app.delete('/delete-event/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('DELETE FROM Events WHERE id_event = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    res.json({ message: 'Event deleted successfully', event: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для изменения ивента
+app.put('/update-event/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, description, location, date, imageurl, fond_id } = req.body;
+
+  try {
+    const result = await pool.query(
+        'UPDATE Events SET name = $1, description = $2, location = $3, data_start = $4, imageurl = $5, id_ownerfond = $6 WHERE id_event = $7 RETURNING *',
+        [name, description, location, date, imageurl, fond_id, id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    res.json({ message: 'Event updated successfully', event: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // Запуск сервера
 app.listen(port, () => {
