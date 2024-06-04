@@ -1,7 +1,7 @@
 import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/models/fond_data.dart';
-import 'package:charity_project/ui_view/fond_description_view.dart';
-import 'package:charity_project/ui_view/fond_profile_view.dart';
+import 'package:charity_project/fond_profile/view/fond_description_view.dart';
+import 'package:charity_project/fond_profile/view/fond_profile_view.dart';
 import 'package:flutter/material.dart';
 
 class FondProfileScreen extends StatefulWidget {

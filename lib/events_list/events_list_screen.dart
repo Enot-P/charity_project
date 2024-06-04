@@ -1,6 +1,6 @@
 import 'package:charity_project/events_list/view/events_list_view.dart';
 import 'package:charity_project/models/tag_data.dart';
-import 'package:charity_project/ui_view/running_view.dart';
+import 'package:charity_project/events_list/view/running_view.dart';
 import 'package:charity_project/ui_view/title_view.dart';
 
 import 'package:flutter/material.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:charity_project/models/tag_data.dart';
-import 'package:charity_project/ui_view/running_view.dart';
-import 'package:charity_project/ui_view/fond_list_view.dart';
+import 'package:charity_project/events_list/view/running_view.dart';
+import 'package:charity_project/fond_list/view/fond_list_view.dart';
 import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'dart:convert';

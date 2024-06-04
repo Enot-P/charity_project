@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../charity_app_theme.dart';
+import '../../charity_app_theme.dart';
 
 class RunningView extends StatelessWidget {
   final AnimationController? animationController;
