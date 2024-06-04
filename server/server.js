@@ -4,6 +4,7 @@ const cors = require('cors');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const path = require('path');
+const axios = require('axios');
 const app = express();
 const port = 3000;
 
@@ -35,6 +36,83 @@ const upload = multer({ storage });
 
 // Настройка статического сервера для обслуживания загруженных изображений
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Маршрут для создания платежа
+app.post('/create-payment', async (req, res) => {
+  const { amount } = req.body;
+
+  const url = 'https://api.yookassa.ru/v3/payments';
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Basic Mzk3ODgzOnRlc3RfTExtbnp5Qmt3eEMtM2FHalNNaURYUG1lLU5kTjJqVFVXOExkOGNlemRHMA==',
+    'Idempotence-Key': Date.now().toString(),
+  };
+  const body = {
+    amount: {
+      value: amount,
+      currency: 'RUB',
+    },
+    confirmation: {
+      type: 'redirect',
+      return_url: 'https://www.example.com/return_url',
+    },
+    capture: true,
+    description: 'Заказ №1',
+  };
+
+  try {
+    const response = await axios.post(url, body, { headers });
+    if (response.status === 200) {
+      const confirmationUrl = response.data.confirmation.confirmation_url;
+      res.json({ confirmationUrl });
+    } else {
+      res.status(response.status).json({ error: response.data });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Маршрут для создания выплаты
+app.post('/create-payout', async (req, res) => {
+  const { amount } = req.body;
+
+  const url = 'https://api.yookassa.ru/v3/payouts';
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Basic NTA2MTM0OnRlc3RfKmdhLXltZFBlSUV5VEd1dHNPY09BUTc3TEZuM2otQkk1WU1NXy1qM2t1alg4',
+    'Idempotence-Key': Date.now().toString(),
+  };
+  const body = {
+    amount: {
+      value: amount,
+      currency: 'RUB',
+    },
+    payout_destination_data: {
+      type: 'bank_card',
+      card: {
+        number: '5555555555554477',
+      },
+    },
+    description: 'Выплата по заказу №1',
+    metadata: {
+      order_id: '1',
+    },
+  };
+
+  try {
+    const response = await axios.post(url, body, { headers });
+    if (response.status === 200) {
+      res.json({ message: 'Payout created successfully', data: response.data });
+    } else {
+      res.status(response.status).json({ error: response.data });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 // Маршрут для регистрации пользователя с загрузкой изображения

@@ -1,10 +1,9 @@
 import 'package:charity_project/fond_profile/view/payment_page.dart';
+import 'package:charity_project/fond_profile/widgets/yookassa_service.dart';
 import 'package:charity_project/login/common/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class FondProfileView extends StatefulWidget {
   final FondData? fond;
@@ -22,6 +21,7 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
   late AnimationController _animationController;
   late Animation<double> _animation;
   final TextEditingController _amountController = TextEditingController();
+  final YooKassaService _yooKassaService = YooKassaService();
 
   @override
   void initState() {
@@ -55,46 +55,18 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
       return;
     }
 
-    final url = Uri.parse('https://api.yookassa.ru/v3/payments');
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Basic Mzk3ODgzOnRlc3RfTExtbnp5Qmt3eEMtM2FHalNNaURYUG1lLU5kTjJqVFVXOExkOGNlemRHMA==',
-      'Idempotence-Key': DateTime.now().millisecondsSinceEpoch.toString(),
-    };
-    final body = jsonEncode({
-      'amount': {
-        'value': amount,
-        'currency': 'RUB',
-      },
-      'confirmation': {
-        'type': 'redirect',
-        'return_url': 'https://www.example.com/return_url',
-      },
-      'capture': true,
-      'description': 'Заказ №1',
-    });
-
-    try {
-      final response = await http.post(url, headers: headers, body: body);
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        final confirmationUrl = responseData['confirmation']['confirmation_url'];
-        print('Confirmation URL: $confirmationUrl'); // Выводим URL для проверки
-        if (confirmationUrl != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => PaymentPage(url: confirmationUrl),
-            ),
-          );
-        } else {
-          print('Error: confirmation_url is null');
-        }
-      } else {
-        print('Error creating payment: ${response.statusCode} ${response.body}');
-      }
-    } catch (e) {
-      print('Exception: $e');
+    final confirmationUrl = await _yooKassaService.createPayment(amount);
+    if (confirmationUrl != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => PaymentPage(
+            url: confirmationUrl,
+            onPaymentSuccess: () => _yooKassaService.createPayout(amount),
+          ),
+        ),
+      );
+    } else {
+      print('Error: confirmationUrl is null');
     }
   }
 
@@ -170,7 +142,7 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
                                   hintText: 'Введите сумму',
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return '';
+                                      return 'Пожалуйста, введите сумму';
                                     }
                                     return null;
                                   },

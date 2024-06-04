@@ -1,11 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentPage extends StatefulWidget {
   final String url;
+  final VoidCallback onPaymentSuccess;
 
-  const PaymentPage({super.key, required this.url});
+  const PaymentPage({super.key, required this.url, required this.onPaymentSuccess});
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -25,10 +25,16 @@ class _PaymentPageState extends State<PaymentPage> {
             // Update loading bar.
           },
           onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
+          onPageFinished: (String url) {
+            if (url.startsWith('https://www.example.com/return_url')) {
+              widget.onPaymentSuccess();
+              Navigator.of(context).pop();
+            }
+          },
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             if (request.url.startsWith('https://www.example.com/return_url')) {
+              widget.onPaymentSuccess();
               Navigator.of(context).pop();
               return NavigationDecision.prevent;
             }
