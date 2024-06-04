@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:webview_flutter/webview_flutter.dart';
+
+import 'package:flutter/material.dart';
+import 'package:charity_project/models/fond_data.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class FondProfileView extends StatefulWidget {
   final FondData? fond;
@@ -40,6 +50,44 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  Future<void> _createPayment() async {
+    final url = Uri.parse('https://api.yookassa.ru/v3/payments');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic Mzk3ODgzOnRlc3RfTExtbnp5Qmt3eEMtM2FHalNNaURYUG1lLU5kTjJqVFVXOExkOGNlemRHMA==',
+      'Idempotence-Key': DateTime.now().millisecondsSinceEpoch.toString(),
+    };
+    final body = jsonEncode({
+      'amount': {
+        'value': '100.00',
+        'currency': 'RUB',
+      },
+      'confirmation': {
+        'type': 'redirect',
+        'return_url': 'https://www.example.com/return_url',
+      },
+      'capture': true,
+      'description': 'Заказ №1',
+    });
+
+    final response = await http.post(url, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      final confirmationUrl = responseData['confirmation']['confirmation_url'];
+      if (confirmationUrl != null) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PaymentPage(url: confirmationUrl),
+          ),
+        );
+      }
+    } else {
+      // Handle error
+      print('Error creating payment: ${response.body}');
+    }
   }
 
   @override
@@ -110,29 +158,23 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
                               const Padding(padding: EdgeInsets.only(top: 10)),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blueAccent.shade100,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0,
-                                    vertical: 10.0,
-                                  ),
-                                  textStyle: GoogleFonts.caveat(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                  )
+                                    backgroundColor: Colors.blueAccent.shade100,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0,
+                                      vertical: 10.0,
+                                    ),
+                                    textStyle: GoogleFonts.caveat(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                    )
                                 ),
-                                onPressed: () {
-                                  // Add your logic here for what happens when the button is pressed
-                                },
-
+                                onPressed: _createPayment,
                                 child: const Text('Пожертвовать'),
                               ),
                             ],
                           ),
-
                         ],
-
                       ),
-
                     ),
                   ],
                 ),
@@ -141,6 +183,54 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
           ),
         );
       },
+    );
+  }
+}
+
+class PaymentPage extends StatefulWidget {
+  final String url;
+
+  const PaymentPage({super.key, required this.url});
+
+  @override
+  _PaymentPageState createState() => _PaymentPageState();
+}
+
+class _PaymentPageState extends State<PaymentPage> {
+  late WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) {
+            if (request.url.startsWith('https://www.example.com/return_url')) {
+              Navigator.of(context).pop();
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Оплата'),
+      ),
+      body: WebViewWidget(controller: _controller),
     );
   }
 }
