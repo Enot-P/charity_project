@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:charity_project/models/user_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:charity_project/charity_app_home_screen.dart';
@@ -164,10 +164,6 @@ class _LoginPageState extends State<LoginPage> {
       final email = _emailController.text;
       final password = _passwordController.text;
 
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text('Submitting data..')),
-      // );
-
       try {
         final response = await loginUser(email, password);
 
@@ -175,6 +171,10 @@ class _LoginPageState extends State<LoginPage> {
           final Map<String, dynamic> responseBody = jsonDecode(response.body);
           final Map<String, dynamic> userDataJson = responseBody['user'];
           final int userId = userDataJson['id_user'];
+
+          // Сохранение userId в SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setInt('userId', userId);
 
           Navigator.pushReplacement(
             context,

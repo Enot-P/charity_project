@@ -1,18 +1,18 @@
-// lib/services/yookassa_service.dart
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class YooKassaService {
   static const String _baseUrl = 'http://192.168.0.112:3000';
 
-  Future<String?> createPayment(String amount) async {
+  Future<String?> createPayment(String amount, int idUser, int idFond) async {
     final url = Uri.parse('$_baseUrl/create-payment');
     final headers = {
       'Content-Type': 'application/json',
     };
     final body = jsonEncode({
       'amount': amount,
+      'id_user': idUser,
+      'id_fond': idFond,
     });
 
     try {

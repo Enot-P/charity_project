@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 class CustomInputField extends StatefulWidget {
-  final String labelText;
+  final String? labelText;
   final String hintText;
   final String? Function(String?) validator;
   final bool suffixIcon;
   final bool? isDense;
   final bool obscureText;
-  final TextEditingController? controller; // Добавляем параметр controller
+  final TextEditingController? controller;
 
   const CustomInputField({
     super.key,
-    required this.labelText,
+    this.labelText,
     required this.hintText,
     required this.validator,
     this.suffixIcon = false,
     this.isDense,
     this.obscureText = false,
-    this.controller, // Инициализируем параметр controller
+    this.controller,
   });
 
   @override
@@ -35,17 +35,22 @@ class _CustomInputFieldState extends State<CustomInputField> {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
       child: Column(
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(widget.labelText, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          ),
+          if (widget.labelText != null) // Условное отображение виджета Text
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                widget.labelText!,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
           TextFormField(
-            controller: widget.controller, // Используем controller
+            controller: widget.controller,
             obscureText: (widget.obscureText && _obscureText),
             decoration: InputDecoration(
               isDense: (widget.isDense != null) ? widget.isDense : false,
               hintText: widget.hintText,
-              suffixIcon: widget.suffixIcon ? IconButton(
+              suffixIcon: widget.suffixIcon
+                  ? IconButton(
                 icon: Icon(
                   _obscureText ? Icons.remove_red_eye : Icons.visibility_off_outlined,
                   color: Colors.black54,
@@ -55,10 +60,11 @@ class _CustomInputFieldState extends State<CustomInputField> {
                     _obscureText = !_obscureText;
                   });
                 },
-              ): null,
-              suffixIconConstraints: (widget.isDense != null) ? const BoxConstraints(
-                  maxHeight: 33
-              ): null,
+              )
+                  : null,
+              suffixIconConstraints: (widget.isDense != null)
+                  ? const BoxConstraints(maxHeight: 33)
+                  : null,
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: widget.validator,

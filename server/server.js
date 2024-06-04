@@ -39,7 +39,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Маршрут для создания платежа
 app.post('/create-payment', async (req, res) => {
-  const { amount } = req.body;
+  const { amount, id_user, id_fond } = req.body;
 
   const url = 'https://api.yookassa.ru/v3/payments';
   const headers = {
@@ -64,6 +64,24 @@ app.post('/create-payment', async (req, res) => {
     const response = await axios.post(url, body, { headers });
     if (response.status === 200) {
       const confirmationUrl = response.data.confirmation.confirmation_url;
+
+      // Вставка данных в таблицу transactions
+      const query = `
+        INSERT INTO transactions (sum, data_transaction, id_fond, id_user)
+        VALUES ($1, NOW(), $2, $3)
+        RETURNING id_transaction
+      `;
+      const values = [amount, id_fond, id_user];
+
+      try {
+        const result = await pool.query(query, values);
+        const transactionId = result.rows[0].id_transaction;
+        console.log(`Transaction ID: ${transactionId}`);
+      } catch (dbError) {
+        console.error('Database error:', dbError);
+        return res.status(500).json({ error: 'Database error' });
+      }
+
       res.json({ confirmationUrl });
     } else {
       res.status(response.status).json({ error: response.data });
@@ -73,7 +91,6 @@ app.post('/create-payment', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 // Маршрут для создания выплаты
 app.post('/create-payout', async (req, res) => {
   const { amount } = req.body;

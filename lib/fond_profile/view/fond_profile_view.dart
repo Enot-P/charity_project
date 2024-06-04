@@ -4,6 +4,7 @@ import 'package:charity_project/login/common/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FondProfileView extends StatefulWidget {
   final FondData? fond;
@@ -39,6 +40,22 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
     );
 
     _animationController.forward();
+
+    _printUserId();
+  }
+
+  Future<void> _printUserId() async {
+    int? userId = await getUserId();
+    if (userId != null) {
+      debugPrint('User ID: $userId');
+    } else {
+      debugPrint('User ID not found');
+    }
+  }
+
+  Future<int?> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('userId');
   }
 
   @override
@@ -55,7 +72,19 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
       return;
     }
 
-    final confirmationUrl = await _yooKassaService.createPayment(amount);
+    int? userId = await getUserId();
+    if (userId == null) {
+      print('Error: User ID not found');
+      return;
+    }
+
+    final idFond = widget.fond?.id; // Предполагается, что у FondData есть поле id
+    if (idFond == null) {
+      print('Error: Fond ID not found');
+      return;
+    }
+
+    final confirmationUrl = await _yooKassaService.createPayment(amount, userId, idFond);
     if (confirmationUrl != null) {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -138,7 +167,6 @@ class _FondProfileViewState extends State<FondProfileView> with SingleTickerProv
                                 ),
                                 const Padding(padding: EdgeInsets.only(top: 10)),
                                 CustomInputField(
-                                  labelText: 'Сумма',
                                   hintText: 'Введите сумму',
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {

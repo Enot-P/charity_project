@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:charity_project/charity_app_theme.dart';
 import 'package:charity_project/models/user_data.dart';
 import 'package:charity_project/fond_list/view/fond_list_view.dart';
-import 'package:charity_project/event_profile/view/user_profile_view.dart';
+import 'package:charity_project/my_profie/view/user_profile_view.dart';
 import 'package:charity_project/ui_view/title_view.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
