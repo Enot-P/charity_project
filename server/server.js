@@ -198,6 +198,40 @@ app.post('/login', async (req, res) => {
   }
 });
 
+
+// Маршрут для получения последних 4 фондов, на которые пользователь сделал пожертвования
+app.get('/user/:id/last-donations', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      SELECT f.id_fond, f.imageurl, f.name AS fund_name, f.balance, t.name AS tag_name, f.description, f.phone, f.location, f.email
+      FROM transactions tr
+      JOIN fonds f ON tr.id_fond = f.id_fond
+      LEFT JOIN tags t ON f.id_tag = t.id_tag
+      WHERE tr.id_user = $1
+      ORDER BY tr.data_transaction DESC
+      LIMIT 4
+    `;
+    const values = [id];
+
+    const result = await pool.query(query, values);
+    const fonds = result.rows.map(fond => ({
+      id: fond.id_fond,
+      imageUrl: fond.imageurl,
+      fundName: fond.fund_name,
+      amount: fond.balance.toString(),
+      tag: fond.tag_name,
+      description: fond.description,
+      contactInfo: `Телефон: ${fond.phone} \nАдрес: ${fond.location} \nE-mail: ${fond.email}`,
+    }));
+    res.json(fonds);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Маршрут для получения данных пользователя по id
 app.get('/user/:id', async (req, res) => {
   const { id } = req.params;

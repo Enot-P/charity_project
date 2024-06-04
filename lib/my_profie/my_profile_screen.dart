@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:charity_project/charity_app_theme.dart';
+import 'package:charity_project/models/fond_data.dart';
 import 'package:charity_project/models/user_data.dart';
 import 'package:charity_project/fond_list/view/fond_list_view.dart';
+import 'package:charity_project/my_profie/view/donation_list_view.dart';
 import 'package:charity_project/my_profie/view/user_profile_view.dart';
 import 'package:charity_project/ui_view/title_view.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
     with TickerProviderStateMixin {
   Animation<double>? topBarAnimation;
   UserData? userData;
+  List<FondData> lastDonations = [];
+
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
@@ -60,10 +64,15 @@ class _MyProfileScreenState extends State<MyProfileScreen>
   }
 
   Future<void> fetchUserData() async {
-    final response = await http.get(Uri.parse('http://192.168.0.112:3000/user/${widget.userId}'));
-    if (response.statusCode == 200) {
+    final userResponse = await http.get(Uri.parse('http://192.168.0.112:3000/user/${widget.userId}'));
+    final donationsResponse = await http.get(Uri.parse('http://192.168.0.112:3000/user/${widget.userId}/last-donations'));
+
+    if (userResponse.statusCode == 200 && donationsResponse.statusCode == 200) {
       setState(() {
-        userData = UserData.fromJson(jsonDecode(response.body));
+        userData = UserData.fromJson(jsonDecode(userResponse.body));
+        lastDonations = (jsonDecode(donationsResponse.body) as List)
+            .map((data) => FondData.fromJson(data))
+            .toList();
         addAllListData();
       });
     } else {
@@ -97,17 +106,9 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         ),
       );
 
-      // listViews.add(
-      //   FondListView(
-      //     donation: true,
-      //     mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-      //         CurvedAnimation(
-      //             parent: widget.animationController!,
-      //             curve: const Interval((1 / animationDuration) * 3, 1.0,
-      //                 curve: Curves.fastOutSlowIn))),
-      //     mainScreenAnimationController: widget.animationController,
-      //   ),
-      // );
+      listViews.add(
+        FondListView(donation: true, fondDataList: lastDonations)
+      );
     }
   }
 
