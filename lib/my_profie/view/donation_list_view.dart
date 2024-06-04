@@ -4,68 +4,119 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:google_fonts/google_fonts.dart';
 
-class DonationListView extends StatelessWidget {
+class DonationListView extends StatefulWidget {
   const DonationListView({
     super.key,
+    this.mainScreenAnimationController,
+    this.mainScreenAnimation,
     required this.donation,
     required this.fondDataList,
   });
 
+  final AnimationController? mainScreenAnimationController;
+  final Animation<double>? mainScreenAnimation;
   final bool donation;
   final List<FondData> fondDataList;
 
   @override
+  _DonationListViewState createState() => _DonationListViewState();
+}
+
+class _DonationListViewState extends State<DonationListView> with TickerProviderStateMixin {
+  AnimationController? animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    animationController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 500,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: GridView.builder(
-        padding: const EdgeInsets.only(top: 0, bottom: 16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16.0,
-          mainAxisSpacing: 16.0,
-          childAspectRatio: 0.75,
-        ),
-        itemCount: fondDataList.length,
-        itemBuilder: (BuildContext context, int index) {
-          final fond = fondDataList[index];
-          return DonationItem(
-            fond: fond,
-            fundName: fond.fundName,
-            donationAmount: donation ? fond.amount : null,
-            imageUrl: fond.imageUrl,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FondProfileScreen(
-                    fond: fond,
-                  ),
+    return AnimatedBuilder(
+      animation: widget.mainScreenAnimationController!,
+      builder: (BuildContext context, Widget? child) {
+        return FadeTransition(
+          opacity: widget.mainScreenAnimation!,
+          child: Transform(
+            transform: Matrix4.translationValues(
+                0.0, 30 * (1.0 - widget.mainScreenAnimation!.value), 0.0),
+            child: Container(
+              height: 500,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: GridView.builder(
+                padding: const EdgeInsets.only(top: 0, bottom: 16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                  childAspectRatio: 0.75,
                 ),
-              );
-            },
-          );
-        },
-      ),
+                itemCount: widget.fondDataList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final fond = widget.fondDataList[index];
+                  final Animation<double> animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
+                      parent: animationController!,
+                      curve: Interval((1 / widget.fondDataList.length) * index, 1.0, curve: Curves.fastOutSlowIn),
+                    ),
+                  );
+                  animationController?.forward();
+                  return AnimatedDonationItem(
+                    fond: fond,
+                    fundName: fond.fundName,
+                    donationAmount: widget.donation ? fond.amount : null,
+                    animation: animation,
+                    animationController: animationController!,
+                    imageUrl: fond.imageUrl,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FondProfileScreen(
+                            fond: fond,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
-class DonationItem extends StatelessWidget {
-  const DonationItem({
+class AnimatedDonationItem extends StatelessWidget {
+  const AnimatedDonationItem({
     super.key,
     required this.fundName,
     this.donationAmount,
     required this.imageUrl,
     required this.onPressed,
+    this.animationController,
+    this.animation,
     required this.fond,
   });
 
   final String fundName;
   final double? donationAmount;
   final String imageUrl;
+  final AnimationController? animationController;
+  final Animation<double>? animation;
   final VoidCallback onPressed;
   final FondData fond;
 
@@ -73,91 +124,107 @@ class DonationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle style = GoogleFonts.pacifico();
 
-    return GestureDetector(
-      onTap: onPressed,
-      child: SizedBox(
-        width: 150,
-        child: Container(
-          margin: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                offset: const Offset(3, 6),
-                blurRadius: 10,
+    return AnimatedBuilder(
+      animation: animationController!,
+      builder: (BuildContext context, Widget? child) {
+        return GestureDetector(
+          onTap: onPressed,
+          child: FadeTransition(
+            opacity: animation!,
+            child: Transform(
+              transform: Matrix4.translationValues(
+                100 * (1.0 - animation!.value),
+                0.0,
+                0.0,
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16.0),
-            child: Stack(
-              children: [
-                Image.network(
-                  imageUrl,
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-                Positioned.fill(
-                  child: BackdropFilter(
-                    filter: ui.ImageFilter.blur(sigmaX: 1.8, sigmaY: 1.8),
-                    child: Container(
-                      color: Colors.black.withOpacity(0.3),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          fundName,
-                          style: style.copyWith(
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 19,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 4.0,
-                                color: Colors.black.withOpacity(0.6),
-                                offset: const Offset(2.0, 2.0),
-                              ),
-                            ],
-                          ),
-                        ),
+              child: SizedBox(
+                width: 150,
+                height: 200, // Установим фиксированную высоту
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        offset: const Offset(3, 6),
+                        blurRadius: 10,
                       ),
-                      if (donationAmount != null)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            '${donationAmount!.toStringAsFixed(2)} руб',
-                            style: style.copyWith(
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 14,
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 4.0,
-                                  color: Colors.black.withOpacity(0.6),
-                                  offset: const Offset(2.0, 2.0),
-                                ),
-                              ],
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Stack(
+                      children: [
+                        Image.asset(
+                          imageUrl,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                        Positioned.fill(
+                          child: BackdropFilter(
+                            filter: ui.ImageFilter.blur(sigmaX: 1.8, sigmaY: 1.8),
+                            child: Container(
+                              color: Colors.black.withOpacity(0.3),
                             ),
                           ),
                         ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  fundName,
+                                  style: style.copyWith(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 19,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 4.0,
+                                        color: Colors.black.withOpacity(0.6),
+                                        offset: const Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              if (donationAmount != null)
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    '${donationAmount!.toStringAsFixed(2)} руб',
+                                    style: style.copyWith(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 4.0,
+                                          color: Colors.black.withOpacity(0.6),
+                                          offset: const Offset(2.0, 2.0),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
