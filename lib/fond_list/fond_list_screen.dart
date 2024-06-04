@@ -8,17 +8,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class FondListScreen extends StatefulWidget {
-  const FondListScreen({Key? key, this.animationController});
-
-  final AnimationController? animationController;
+  const FondListScreen({Key? key});
 
   @override
   _FondListScreenState createState() => _FondListScreenState();
 }
 
-class _FondListScreenState extends State<FondListScreen> with TickerProviderStateMixin {
-  Animation<double>? topBarAnimation;
-
+class _FondListScreenState extends State<FondListScreen> {
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
@@ -31,10 +27,6 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: widget.animationController!,
-            curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
     _fetchTags();
 
     scrollController.addListener(() {
@@ -90,16 +82,9 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
   }
 
   void addAllListData(String tag) {
-    const int animationDuration = 5;
-
-    listViews.add(
-      RunningView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve: const Interval((1 / animationDuration) * 3, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
-    );
+    // listViews.add(
+    //   const RunningView(),
+    // );
 
     listViews.add(
       Padding(
@@ -128,19 +113,12 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
       ),
     );
 
-      listViews.add(
-        FondListView(
-            fondDataList: _allFonds,
-            mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                  parent: widget.animationController!,
-                  curve: const Interval((1 / animationDuration) * 3, 1.0,
-                      curve: Curves.fastOutSlowIn))),
-          mainScreenAnimationController: widget.animationController,
-          donation: false,
-        ),
-
-      );
+    listViews.add(
+      FondListView(
+        fondDataList: _allFonds,
+        donation: false,
+      ),
+    );
   }
 
   void _updateListByTag(String tag) {
@@ -158,8 +136,6 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
     });
     print('After updating listViews: $listViews');
   }
-
-
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
@@ -203,7 +179,6 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
             itemCount: listViews.length,
             scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
-              widget.animationController?.forward();
               return listViews[index];
             },
           );
@@ -212,70 +187,53 @@ class _FondListScreenState extends State<FondListScreen> with TickerProviderStat
     );
   }
 
-
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: widget.animationController!,
-          builder: (BuildContext context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation!,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                  0.0,
-                  30 * (1.0 - topBarAnimation!.value),
-                  0.0,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: CharityAppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: CharityAppTheme.grey.withOpacity(
-                            0.4 * topBarOpacity),
-                        offset: const Offset(1.1, 1.1),
-                        blurRadius: 10.0,
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 50 - 8.0 * topBarOpacity,
-                      bottom: 12 - 8.0 * topBarOpacity,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Список фондов',
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontFamily: CharityAppTheme.fontName,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 15 + 6 - 6 * topBarOpacity,
-                                letterSpacing: 1.2,
-                                color: CharityAppTheme.darkerText,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+        Container(
+          decoration: BoxDecoration(
+            color: CharityAppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: CharityAppTheme.grey.withOpacity(0.4 * topBarOpacity),
+                offset: const Offset(1.1, 1.1),
+                blurRadius: 10.0,
               ),
-            );
-          },
-        )
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 50 - 8.0 * topBarOpacity,
+              bottom: 12 - 8.0 * topBarOpacity,
+            ),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Список фондов',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: CharityAppTheme.fontName,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 21,
+                        letterSpacing: 1.2,
+                        color: CharityAppTheme.darkerText,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

@@ -111,7 +111,7 @@ class _CharityAppHomeScreenState extends State<CharityAppHomeScreen>
                   return;
                 }
                 setState(() {
-                  tabBody = FondListScreen(animationController: animationController);
+                  tabBody = const FondListScreen();
                 });
               });
             }
