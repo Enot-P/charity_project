@@ -22,9 +22,10 @@ class MyProfileScreen extends StatefulWidget {
 class _MyProfileScreenState extends State<MyProfileScreen>
     with TickerProviderStateMixin {
   Animation<double>? topBarAnimation;
+  Animation<double>? noTransactionsAnimation;
   UserData? userData;
   List<FondData> lastDonations = [];
-
+  bool showNoTransactionsText = false;
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
@@ -36,6 +37,10 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         CurvedAnimation(
             parent: widget.animationController!,
             curve: const Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+    noTransactionsAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+            parent: widget.animationController!,
+            curve: const Interval(0.5, 1.0, curve: Curves.fastOutSlowIn)));
     fetchUserData();
 
     scrollController.addListener(() {
@@ -73,6 +78,7 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         lastDonations = (jsonDecode(donationsResponse.body) as List)
             .map((data) => FondData.fromJson(data))
             .toList();
+        showNoTransactionsText = lastDonations.isEmpty;
         addAllListData();
       });
     } else {
@@ -106,17 +112,23 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         ),
       );
 
-      listViews.add(
-        DonationListView(
-          mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                  parent: widget.animationController!,
-                  curve: const Interval((1 / animationDuration) * 3, 1.0,
-                      curve: Curves.fastOutSlowIn))),
-          mainScreenAnimationController: widget.animationController,
-          donation: false, fondDataList: lastDonations,
-        )
-      );
+      if (lastDonations.isEmpty) {
+        listViews.add(
+          Container(), // Пустой контейнер, чтобы не добавлять ничего в список
+        );
+      } else {
+        listViews.add(
+            DonationListView(
+              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController!,
+                      curve: const Interval((1 / animationDuration) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              mainScreenAnimationController: widget.animationController,
+              donation: true, fondDataList: lastDonations,
+            )
+        );
+      }
     }
   }
 
@@ -151,20 +163,49 @@ class _MyProfileScreenState extends State<MyProfileScreen>
         if (!snapshot.hasData || userData == null) {
           return const SizedBox();
         } else {
-          return ListView.builder(
-            controller: scrollController,
-            padding: EdgeInsets.only(
-              top: AppBar().preferredSize.height +
-                  MediaQuery.of(context).padding.top +
-                  24,
-              bottom: 62 + MediaQuery.of(context).padding.bottom,
-            ),
-            itemCount: listViews.length,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (BuildContext context, int index) {
-              widget.animationController?.forward();
-              return listViews[index];
-            },
+          return Stack(
+            children: [
+              ListView.builder(
+                controller: scrollController,
+                padding: EdgeInsets.only(
+                  top: AppBar().preferredSize.height +
+                      MediaQuery.of(context).padding.top +
+                      24,
+                  bottom: 62 + MediaQuery.of(context).padding.bottom,
+                ),
+                itemCount: listViews.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (BuildContext context, int index) {
+                  widget.animationController?.forward();
+                  return listViews[index];
+                },
+              ),
+              if (lastDonations.isEmpty)
+                AnimatedBuilder(
+                  animation: noTransactionsAnimation!,
+                  builder: (BuildContext context, Widget? child) {
+                    return FadeTransition(
+                      opacity: noTransactionsAnimation!,
+                      child: Transform(
+                        transform: Matrix4.translationValues(
+                            0.0, 30 * (1.0 - noTransactionsAnimation!.value), 0.0),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16.0), // Добавляем отступ слева
+                            child: Text(
+                              'Пока что вы не совершили ни одну транзакцию',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: CharityAppTheme.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            ],
           );
         }
       },
