@@ -1,4 +1,5 @@
 import 'package:charity_project/charity_app_theme.dart';
+import 'package:charity_project/fond_profile/widgets/subscribe_button.dart';
 import 'package:charity_project/models/fond_data.dart';
 import 'package:charity_project/fond_profile/view/fond_description_view.dart';
 import 'package:charity_project/fond_profile/view/fond_profile_view.dart';
@@ -75,6 +76,12 @@ class _FondProfileScreenState extends State<FondProfileScreen> with TickerProvid
     listViews.add(
       FondProfileView(
         fond: widget.fond,
+      ),
+    );
+
+    listViews.add(
+      SubscribeButton(
+        fondId: widget.fond.id,
       ),
     );
 

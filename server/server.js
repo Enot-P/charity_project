@@ -198,6 +198,21 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Маршрут для добавления подписки
+app.post('/add-subscription', async (req, res) => {
+  const { id_user, id_fond } = req.body;
+
+  try {
+    const result = await pool.query(
+      'INSERT INTO subscriptions (id_user, id_fond) VALUES ($1, $2) RETURNING *',
+      [id_user, id_fond]
+    );
+    res.json({ message: 'Subscription added successfully', subscription: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // Маршрут для получения последних 4 фондов, на которые пользователь сделал пожертвования
 app.get('/user/:id/last-donations', async (req, res) => {
