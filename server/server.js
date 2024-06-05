@@ -135,7 +135,7 @@ app.post('/create-payout', async (req, res) => {
 // Маршрут для регистрации пользователя с загрузкой изображения
 app.post('/register', upload.single('profileImage'), async (req, res) => {
   const { name, surname, email, password } = req.body;
-  const profileImage = req.file ? `http://192.168.0.112:3000/uploads/${req.file.filename}` : null;
+  const profileImage = req.file ? `uploads/${req.file.filename}` : null;
 
   try {
     // Хешируем пароль

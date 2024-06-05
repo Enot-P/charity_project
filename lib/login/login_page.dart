@@ -83,30 +83,6 @@ class _LoginPageState extends State<LoginPage> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          width: size.width * 0.80,
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                  const ForgetPasswordPage(),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              'Забыли пароль?',
-                              style: TextStyle(
-                                color: Color(0xff939393),
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
                         CustomFormButton(
                           innerText: 'Вход',
                           onPressed: _handleLoginUser,
