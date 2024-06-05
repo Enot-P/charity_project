@@ -1,11 +1,11 @@
+import 'package:charity_project/create_event/create_event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CreateEventButton extends StatelessWidget {
-  final VoidCallback onPressed;
   final Animation<double> animation;
 
-  const CreateEventButton({super.key, required this.onPressed, required this.animation});
+  const CreateEventButton({super.key, required this.animation});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,12 @@ class CreateEventButton extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onPressed: onPressed,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CreateEventScreen()),
+                  );
+                },
                 child: const Text('Создать ивент'),
               ),
             ),

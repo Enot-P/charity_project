@@ -26,7 +26,7 @@ const pool = new Pool({
 // Настройка multer для загрузки изображений
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'uploads')); // Убедитесь, что путь корректен
+    cb(null, path.join(__dirname, 'uploads'));
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -135,7 +135,7 @@ app.post('/create-payout', async (req, res) => {
 // Маршрут для регистрации пользователя с загрузкой изображения
 app.post('/register', upload.single('profileImage'), async (req, res) => {
   const { name, surname, email, password } = req.body;
-  const profileImage = req.file ? `uploads/${req.file.filename}` : null;
+  const profileImage = req.file ? `http://192.168.0.112:3000/uploads/${req.file.filename}` : null;
 
   try {
     // Хешируем пароль
@@ -144,8 +144,8 @@ app.post('/register', upload.single('profileImage'), async (req, res) => {
 
     // Сохраняем пользователя в базу данных с хешированным паролем и путем к изображению
     const result = await pool.query(
-      'INSERT INTO Users (name, secondname, email, password, card_number, imageurl, id_role) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [name, surname, email, hashedPassword, '123456789', profileImage, 2]
+      'INSERT INTO Users (name, secondname, email, password,  imageurl, id_role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, surname, email, hashedPassword, profileImage, 2]
     );
 
     res.json({ message: 'User registered successfully', user: result.rows[0] });
@@ -430,6 +430,35 @@ app.get('/get-events', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.post('/create-event', upload.single('imageurl'), async (req, res) => {
+  const { name, description, location, date, user_id } = req.body;
+  const imageUrl = req.file ? `http://192.168.0.112:3000/uploads/${req.file.filename}` : null;
+
+  console.log('Received data:', { name, description, location, date, user_id, imageUrl });
+
+
+  try {
+    // Получаем id_fond по id_user
+    const fondResult = await pool.query('SELECT id_fond FROM fonds WHERE id_owneruser = $1', [user_id]);
+    if (fondResult.rows.length === 0) {
+      console.log('Фонд не найден для данного пользователя');
+      return res.status(404).json({ message: 'Фонд не найден для данного пользователя' });
+    }
+    const fond_id = fondResult.rows[0].id_fond;
+
+    // Вставляем данные ивента
+    const result = await pool.query(
+      'INSERT INTO Events (name, description, location, data_start, imageurl, id_ownerfond) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, description, location, date, imageUrl, fond_id]
+    );
+    res.json({ message: 'Ивент успешно добавлен', event: result.rows[0] });
+  } catch (err) {
+    console.error('Ошибка при добавлении ивента:', err);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
+});
+
 
 // Маршрут для добавления ивента
 app.post('/add-event', async (req, res) => {

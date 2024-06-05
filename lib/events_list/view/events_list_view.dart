@@ -67,11 +67,11 @@ class _EventsListViewState extends State<EventsListView> with TickerProviderStat
                 future: futureEvents,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No events available'));
+                    return const Center(child: Text('No events available'));
                   } else {
                     return ListView.builder(
                       padding: const EdgeInsets.only(top: 0, bottom: 16),
@@ -147,7 +147,7 @@ class AnimatedEventItem extends StatelessWidget {
       return 'Завтра';
     } else if (difference == 2) {
       return 'Послезавтра';
-    } else if (difference > 2 && difference <= 7) {
+    } else if (difference > 2 && difference <= 4) {
       return 'Через $difference дня';
     } else {
       final DateFormat formatter = DateFormat('dd MMMM, EEEE', 'ru');
@@ -191,7 +191,7 @@ class AnimatedEventItem extends StatelessWidget {
                       Container(
                         width: double.infinity,
                         height: 80, // Установленная высота
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           gradient: LinearGradient(
                             colors: [Colors.white, Colors.blue],
                             begin: Alignment.topLeft,
@@ -228,7 +228,7 @@ class AnimatedEventItem extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            SizedBox(height: 4.0), // Уменьшенный отступ
+                            const SizedBox(height: 4.0), // Уменьшенный отступ
                             Text(
                               getFormattedDate(eventDate),
                               style: style.copyWith(

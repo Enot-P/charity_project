@@ -110,12 +110,6 @@ class _MyProfileScreenState extends State<MyProfileScreen>
       if (userData!.roleId == 3) {
         listViews.add(
           CreateEventButton(
-            onPressed: () {
-              // Действие при нажатии на кнопку "Создать ивент"
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Ивент создан')),
-              );
-            },
             animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
                 parent: widget.animationController!,
                 curve: const Interval((1 / animationDuration) * 1, 1.0, curve: Curves.fastOutSlowIn))),

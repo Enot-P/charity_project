@@ -32,5 +32,6 @@ flutter:
     - assets/fonts/
     - assets/images/
     - assets/photos/
+    - server/uploads/
 
 

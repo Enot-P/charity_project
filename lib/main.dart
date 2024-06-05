@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:charity_project/charity_app_home_screen.dart';
+import 'package:charity_project/create_event/create_event_screen.dart';
 import 'package:charity_project/event_profile/event_profile_screen.dart';
 import 'package:charity_project/fond_profile/fond_profile_screen.dart';
 import 'package:charity_project/login/login_page.dart';
@@ -14,7 +15,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   initializeDateFormatting('ru', null).then((_) {
-    runApp(MyApp());
+    runApp(const MyApp());
   });
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         '/fondList': (context) => CharityAppHomeScreen(userId: userData,),
         '/fondProfile' : (context) => FondProfileScreen(fond: fondData),
         '/eventProfile' : (context) => EventProfileScreen(event: eventData),
+        '/createEvent' : (context) => const CreateEventScreen(),
         '/' : (context) => const LoginPage(),
       },
     );
