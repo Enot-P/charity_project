@@ -8,7 +8,6 @@ import 'package:charity_project/login/common/custom_form_button.dart';
 import 'package:charity_project/login/common/custom_input_field.dart';
 import 'package:charity_project/login/common/page_header.dart';
 import 'package:charity_project/login/common/page_heading.dart';
-import 'package:charity_project/login/forget_password_page.dart';
 import 'package:charity_project/login/signup_page.dart';
 import 'package:email_validator/email_validator.dart';
 
