@@ -273,7 +273,6 @@ app.get('/user/:id', async (req, res) => {
     // Форматируем URL изображения
     const formattedImageUrl = `http://192.168.0.112:3000/${user.imageurl.replace(/\\/g, '/').replace('server/', '')}`;
 
-    // Формируем ответ с user данными и roleName
     res.json({
       id_user: user.id_user,
       name: user.name,
@@ -281,6 +280,7 @@ app.get('/user/:id', async (req, res) => {
       secondname: user.secondname,
       card_number: user.card_number,
       imageurl: formattedImageUrl,
+      id_role: user.id_role,
       roleName: roleName
     });
   } catch (err) {

@@ -4,6 +4,7 @@ class UserData {
   final int id;
   final String name;
   final String email;
+  final roleName;
   final roleId;
   String? secondName;
   String? cardNumber;
@@ -14,6 +15,7 @@ class UserData {
     required this.id,
     required this.name,
     required this.email,
+    required this.roleName,
     required this.roleId,
     this.secondName,
     this.cardNumber,
@@ -26,7 +28,8 @@ class UserData {
       id: json['id_user'] ?? -1,
       name: json['name'] ?? '',
       email: json['email'] ?? '',
-      roleId: json['roleName'] ?? -1,
+      roleName: json['roleName'],
+      roleId: json['id_role'],
       secondName: json['secondname'],
       cardNumber: json['card_number'],
       imageUrl: json['imageurl'],

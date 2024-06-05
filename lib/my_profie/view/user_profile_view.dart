@@ -90,7 +90,7 @@ class UserProfileView extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '${userData.roleId}',
+                                '${userData.roleName}',
                                 style: TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w800,

@@ -5,6 +5,7 @@ import 'package:charity_project/models/user_data.dart';
 import 'package:charity_project/fond_list/view/fond_list_view.dart';
 import 'package:charity_project/my_profie/view/donation_list_view.dart';
 import 'package:charity_project/my_profie/view/user_profile_view.dart';
+import 'package:charity_project/my_profie/widgets/create_event_button.dart';
 import 'package:charity_project/ui_view/title_view.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -75,6 +76,8 @@ class _MyProfileScreenState extends State<MyProfileScreen>
     if (userResponse.statusCode == 200 && donationsResponse.statusCode == 200) {
       setState(() {
         userData = UserData.fromJson(jsonDecode(userResponse.body));
+        debugPrint('${userData!.roleId}');
+
         lastDonations = (jsonDecode(donationsResponse.body) as List)
             .map((data) => FondData.fromJson(data))
             .toList();
@@ -102,6 +105,24 @@ class _MyProfileScreenState extends State<MyProfileScreen>
           userData: userData!,
         ),
       );
+
+      // Добавляем кнопку "Создать ивент", если roleId равен 3
+      if (userData!.roleId == 3) {
+        listViews.add(
+          CreateEventButton(
+            onPressed: () {
+              // Действие при нажатии на кнопку "Создать ивент"
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Ивент создан')),
+              );
+            },
+            animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                parent: widget.animationController!,
+                curve: const Interval((1 / animationDuration) * 1, 1.0, curve: Curves.fastOutSlowIn))),
+          ),
+        );
+      }
+
       listViews.add(
         TitleView(
           titleTxt: 'Ваши последние пожертвования:',
